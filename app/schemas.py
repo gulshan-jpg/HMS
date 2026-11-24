@@ -1248,6 +1248,7 @@ class OnboardingSaveRequest(BaseModel):
     rate_plans: Optional[List[OnboardingRatePlan]] = None
     taxes: Optional[List[OnboardingTaxRate]] = None
     staff: Optional[OnboardingStaff] = None
+    staff_members: Optional[List[OnboardingStaff]] = None
 
 
 TokenResponse.model_rebuild()

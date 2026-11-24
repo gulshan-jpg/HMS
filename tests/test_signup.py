@@ -182,11 +182,18 @@ async def test_onboarding_get_and_save_customized_data(client, db_session):
         "taxes": [
             {"name": "Standard GST (12%)", "rate": 12.0, "applies_to": "rooms", "description": "Tariffs <= 7500"}
         ],
-        "staff": {
-            "full_name": "Radhika Sharma",
-            "email": "radhika@jaipurpalace.in",
-            "role": "front_desk"
-        }
+        "staff_members": [
+            {
+                "full_name": "Rohan Verma",
+                "email": "rohan@jaipurpalace.in",
+                "role": "housekeeping"
+            },
+            {
+                "full_name": "Radhika Sharma",
+                "email": "radhika@jaipurpalace.in",
+                "role": "front_desk"
+            }
+        ]
     }
     save_resp = await client.post("/api/onboarding/save", json=save_payload, headers=headers)
     assert save_resp.status_code == 200
@@ -201,5 +208,9 @@ async def test_onboarding_get_and_save_customized_data(client, db_session):
     assert any(rt["name"] == "Luxury King Suite" and rt["base_rate"] == 8900.0 for rt in updated_data["room_types"])
     assert any(r["number"] == "501" and r["floor"] == 5 for r in updated_data["rooms"])
     assert any(rp["code"] == "MEMB" and rp["modifier_value"] == -12.0 for rp in updated_data["rate_plans"])
+    assert len(updated_data["staff_members"]) == 2
+    staff_emails = [s["email"] for s in updated_data["staff_members"]]
+    assert "rohan@jaipurpalace.in" in staff_emails
+    assert "radhika@jaipurpalace.in" in staff_emails
 
 

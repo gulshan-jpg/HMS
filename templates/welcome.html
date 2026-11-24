@@ -500,25 +500,59 @@
     <div class="card" id="step-6" style="display: none;">
       <h2>6. Invite Front Desk & Housekeeping Staff</h2>
       <p class="desc">Add your staff members. Role presets control permissions so housekeeping and desk staff only see what they need.</p>
-      <div class="row">
-        <div class="form-group">
-          <label>Staff Full Name</label>
-          <input type="text" id="wiz_staff_name" placeholder="Pooja Sharma">
+      
+      <!-- Input Section to Type One Details and Add to List -->
+      <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 22px;">
+        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; justify-content: space-between;">
+          <span style="display: flex; align-items: center; gap: 6px;">
+            <svg style="width: 16px; height: 16px; color: var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+            Add Staff Member
+          </span>
+          <span style="font-size: 12px; font-weight: normal; color: var(--text-secondary);">Type details, then click "+ Add to Team" to save and add more</span>
         </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="wiz_staff_email" placeholder="pooja@hotel.com">
+
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="wiz_staff_name">Staff Full Name</label>
+            <input type="text" id="wiz_staff_name" placeholder="e.g. Rohan Verma" onkeydown="if(event.key==='Enter'){event.preventDefault();addStaffFromInput();}">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="wiz_staff_email">Email Address</label>
+            <input type="email" id="wiz_staff_email" placeholder="e.g. rohan@hotel.com" onkeydown="if(event.key==='Enter'){event.preventDefault();addStaffFromInput();}">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 14px; align-items: flex-end; margin-top: 4px;">
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="wiz_staff_role">Preset Role</label>
+            <select id="wiz_staff_role">
+              <option value="front_desk">Front Desk (Check-in, Check-out, Folios)</option>
+              <option value="housekeeping">Housekeeping (Room Turnovers, Maintenance)</option>
+              <option value="accountant">Accountant (Billing, Payments, Invoices)</option>
+              <option value="manager">Hotel Manager (Full Operational Access)</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-add-staff" onclick="addStaffFromInput()" style="height: 42px; padding: 0 22px; white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <span>+ Add to Team</span>
+          </button>
         </div>
       </div>
-      <div class="form-group">
-        <label>Preset Role</label>
-        <select id="wiz_staff_role">
-          <option value="front_desk">Front Desk (Check-in, Check-out, Folios)</option>
-          <option value="housekeeping">Housekeeping (Room Turnovers, Maintenance)</option>
-          <option value="accountant">Accountant (Billing, Payments, Invoices)</option>
-          <option value="manager">Hotel Manager (Full Operational Access)</option>
-        </select>
+
+      <!-- List of Added Staff Members -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 14px; font-weight: 600; color: var(--text); margin: 0; display: flex; align-items: center; gap: 8px;">
+          <span>Invited Team Members</span>
+          <span id="staff-count-badge" style="background: #111827; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px;">0</span>
+        </h3>
+        <button type="button" class="btn-reset" onclick="resetStaffDefaults()" id="reset-staff-btn" style="display: none; padding: 0; font-size: 12px;">Clear All</button>
       </div>
+
+      <div id="staff-list-container" style="margin-bottom: 24px;">
+        <!-- Rendered dynamically -->
+      </div>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="nextStep(5)">&larr; Back</button>
         <button class="btn btn-primary" onclick="nextStep(7)">Review & Finish &rarr;</button>
@@ -535,6 +569,7 @@
         <li><div class="check-icon">✓</div><div><strong>Rooms & Pricing Loaded:</strong> Standard and luxury suite room inventory ready on timeline.</div></li>
         <li><div class="check-icon">✓</div><div><strong>14-Day Free Trial Activated:</strong> Full Pro tier features unlocked with zero billing lock.</div></li>
         <li><div class="check-icon">✓</div><div><strong>Sample Bookings Available:</strong> Realistic arrival list and active folios ready to test check-in workflows.</div></li>
+        <li><div class="check-icon">✓</div><div><strong>Team Members Invited:</strong> <span id="summary-staff-count">0</span> staff member(s) provisioned with role-based permissions.</div></li>
       </ul>
 
       <div class="actions-bar">
@@ -577,15 +612,27 @@
       taxes: [
         { name: 'Standard Room GST (12%)', rate: 12, applies_to: 'rooms', description: 'Tariffs ≤ ₹7,500 (6% CGST + 6% SGST)' },
         { name: 'Luxury Suite GST (18%)', rate: 18, applies_to: 'rooms', description: 'Tariffs > ₹7,500 (9% CGST + 9% SGST)' }
-      ]
+      ],
+      staff: []
     };
 
     let wizardData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
     function goToStep(step) {
+      if (currentStep === 6) {
+        checkAndCommitCurrentStaffInput();
+      }
       if (step === 3) {
         // Refresh rooms whenever moving to step 3 so category dropdowns match step 2 room types
         renderRooms();
+      }
+      if (step === 6) {
+        renderStaff();
+      }
+      if (step === 7) {
+        const staffCount = wizardData.staff ? wizardData.staff.length : 0;
+        const summaryEl = document.getElementById('summary-staff-count');
+        if (summaryEl) summaryEl.textContent = staffCount;
       }
       document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
       document.getElementById(`step-${step}`).style.display = 'block';
@@ -847,6 +894,164 @@
       renderTaxes();
     }
 
+    // --- STEP 6: STAFF MEMBERS ---
+    function renderStaff() {
+      const container = document.getElementById('staff-list-container');
+      const countBadge = document.getElementById('staff-count-badge');
+      const resetBtn = document.getElementById('reset-staff-btn');
+      if (!container) return;
+
+      const list = wizardData.staff || [];
+      if (countBadge) countBadge.textContent = list.length;
+      if (resetBtn) resetBtn.style.display = list.length > 0 ? 'inline-block' : 'none';
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 22px 16px; border: 1px dashed var(--border); border-radius: 8px; color: var(--text-secondary); font-size: 13px; background: #FAFAFA;">
+            No staff members added yet. Type a staff member's details above and click <strong>"+ Add to Team"</strong>. (Optional - you can also invite staff anytime later in Settings).
+          </div>
+        `;
+        return;
+      }
+
+      const roleLabels = {
+        front_desk: 'Front Desk',
+        housekeeping: 'Housekeeping',
+        accountant: 'Accountant',
+        manager: 'Hotel Manager'
+      };
+      const roleBadges = {
+        front_desk: 'background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE;',
+        housekeeping: 'background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A;',
+        accountant: 'background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB;',
+        manager: 'background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;'
+      };
+
+      container.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${list.map((s, idx) => `
+            <div class="editable-card" style="padding: 10px 14px; gap: 8px;" data-idx="${idx}">
+              <div class="card-top-row" style="gap: 12px; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                  <div style="width: 34px; height: 34px; border-radius: 50%; background: #111827; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+                    ${escapeHtml((s.full_name || 'S').charAt(0).toUpperCase())}
+                  </div>
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                      <input type="text" class="card-input-title" value="${escapeHtml(s.full_name || '')}" oninput="updateStaff(${idx}, 'full_name', this.value)" placeholder="Staff Name" style="font-weight: 600; max-width: 190px; padding: 4px 8px; font-size: 13px;">
+                      <span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; ${roleBadges[s.role] || roleBadges.front_desk}">
+                        ${roleLabels[s.role] || s.role}
+                      </span>
+                    </div>
+                    <div style="margin-top: 4px;">
+                      <input type="email" class="card-input-sm" value="${escapeHtml(s.email || '')}" oninput="updateStaff(${idx}, 'email', this.value)" placeholder="staff@hotel.com" style="width: 100%; max-width: 250px; padding: 4px 8px; font-size: 12px;">
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                  <select class="card-input-sm" onchange="updateStaff(${idx}, 'role', this.value)" style="height: 32px; font-size: 12px; padding: 0 8px;">
+                    <option value="front_desk" ${s.role === 'front_desk' ? 'selected' : ''}>Front Desk</option>
+                    <option value="housekeeping" ${s.role === 'housekeeping' ? 'selected' : ''}>Housekeeping</option>
+                    <option value="accountant" ${s.role === 'accountant' ? 'selected' : ''}>Accountant</option>
+                    <option value="manager" ${s.role === 'manager' ? 'selected' : ''}>Hotel Manager</option>
+                  </select>
+                  <button type="button" class="card-delete-btn" onclick="deleteStaff(${idx})" title="Remove staff member" style="width: 32px; height: 32px; font-size: 18px;">&times;</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function addStaffFromInput() {
+      const nameEl = document.getElementById('wiz_staff_name');
+      const emailEl = document.getElementById('wiz_staff_email');
+      const roleEl = document.getElementById('wiz_staff_role');
+
+      const name = nameEl ? nameEl.value.trim() : '';
+      const email = emailEl ? emailEl.value.trim() : '';
+      const role = roleEl ? roleEl.value : 'front_desk';
+
+      if (!name && !email) {
+        if (nameEl) {
+          nameEl.focus();
+          nameEl.style.borderColor = '#DC2626';
+          setTimeout(() => nameEl.style.borderColor = '', 1500);
+        }
+        return;
+      }
+
+      if (!wizardData.staff) {
+        wizardData.staff = [];
+      }
+
+      // Prevent duplicate email
+      if (email && wizardData.staff.some(s => s.email && s.email.toLowerCase() === email.toLowerCase())) {
+        alert('A staff member with email "' + email + '" has already been added.');
+        if (emailEl) emailEl.focus();
+        return;
+      }
+
+      wizardData.staff.push({
+        full_name: name || (email ? email.split('@')[0] : 'Staff Member'),
+        email: email,
+        role: role
+      });
+
+      // Clear form inputs so user can type the next one
+      if (nameEl) nameEl.value = '';
+      if (emailEl) emailEl.value = '';
+      if (roleEl) roleEl.value = 'front_desk';
+      if (nameEl) nameEl.focus();
+
+      renderStaff();
+    }
+
+    function checkAndCommitCurrentStaffInput() {
+      const nameEl = document.getElementById('wiz_staff_name');
+      const emailEl = document.getElementById('wiz_staff_email');
+      const roleEl = document.getElementById('wiz_staff_role');
+
+      const name = nameEl ? nameEl.value.trim() : '';
+      const email = emailEl ? emailEl.value.trim() : '';
+      const role = roleEl ? roleEl.value : 'front_desk';
+
+      if (name || email) {
+        if (!wizardData.staff) wizardData.staff = [];
+        const isDuplicate = email && wizardData.staff.some(s => s.email && s.email.toLowerCase() === email.toLowerCase());
+        if (!isDuplicate) {
+          wizardData.staff.push({
+            full_name: name || (email ? email.split('@')[0] : 'Staff Member'),
+            email: email,
+            role: role
+          });
+          if (nameEl) nameEl.value = '';
+          if (emailEl) emailEl.value = '';
+        }
+      }
+    }
+
+    function updateStaff(idx, field, val) {
+      if (!wizardData.staff || !wizardData.staff[idx]) return;
+      wizardData.staff[idx][field] = val;
+      if (field === 'role') {
+        renderStaff();
+      }
+    }
+
+    function deleteStaff(idx) {
+      if (!wizardData.staff) return;
+      wizardData.staff.splice(idx, 1);
+      renderStaff();
+    }
+
+    function resetStaffDefaults() {
+      wizardData.staff = [];
+      renderStaff();
+    }
+
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -857,6 +1062,8 @@
     }
 
     async function finishWizard() {
+      checkAndCommitCurrentStaffInput();
+
       const btn = document.getElementById('btn-finish');
       if (btn) {
         btn.disabled = true;
@@ -873,11 +1080,8 @@
         rooms: wizardData.rooms,
         rate_plans: wizardData.ratePlans,
         taxes: wizardData.taxes,
-        staff: {
-          full_name: document.getElementById('wiz_staff_name')?.value || '',
-          email: document.getElementById('wiz_staff_email')?.value || '',
-          role: document.getElementById('wiz_staff_role')?.value || 'front_desk'
-        }
+        staff_members: wizardData.staff || [],
+        staff: (wizardData.staff && wizardData.staff.length > 0) ? wizardData.staff[0] : null
       };
 
       if (token) {
@@ -948,6 +1152,9 @@
             if (data.taxes && data.taxes.length > 0) {
               wizardData.taxes = data.taxes;
             }
+            if (data.staff_members && data.staff_members.length > 0) {
+              wizardData.staff = data.staff_members;
+            }
           }
         } catch (e) {
           console.warn('Failed to load initial onboarding data, using defaults:', e);
@@ -959,6 +1166,7 @@
       renderRooms();
       renderRatePlans();
       renderTaxes();
+      renderStaff();
     }
 
     document.addEventListener('DOMContentLoaded', loadInitialData);

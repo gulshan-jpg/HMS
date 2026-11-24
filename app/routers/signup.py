@@ -819,6 +819,18 @@ def get_onboarding_data(
             }
             for t in taxes
         ],
+        "staff_members": [
+            {
+                "full_name": u.full_name,
+                "email": u.email,
+                "role": u.role,
+            }
+            for u in db.query(User).filter(
+                User.organization_id == org.id,
+                User.id != current_user.id,
+                User.is_active.is_(True),
+            ).all()
+        ],
     }
 
 
@@ -832,6 +844,9 @@ def save_onboarding_data(
     org = db.query(Organization).filter(Organization.id == current_user.organization_id).first()
     if not org:
         raise HTTPException(status_code=404, detail="Organization not found")
+
+    # Proactively align PostgreSQL sequences to prevent duplicate key collisions
+    sync_postgres_sequences(db)
 
     try:
         # 1. Update Organization Profile
@@ -1005,19 +1020,31 @@ def save_onboarding_data(
                     db.add(tax)
                 db.flush()
 
-        # 6. Optional Staff Invitation
+        # 6. Staff Invitations (support multiple staff members)
+        staff_to_process = []
+        if payload.staff_members:
+            staff_to_process.extend(payload.staff_members)
         if payload.staff and payload.staff.email:
-            st_email = payload.staff.email.strip().lower()
+            # Add if not duplicate email in staff_to_process
+            if not any(s.email and s.email.strip().lower() == payload.staff.email.strip().lower() for s in staff_to_process):
+                staff_to_process.append(payload.staff)
+
+        for st in staff_to_process:
+            if not st or not st.email:
+                continue
+            st_email = st.email.strip().lower()
+            if not st_email:
+                continue
             existing_st = db.query(User).filter(User.email == st_email).first()
-            if not existing_st and payload.staff.full_name:
+            if not existing_st and st.full_name:
                 st_username = st_email.split("@")[0].replace(".", "_") + f"_{secrets.token_hex(2)}"
                 st_user = User(
                     organization_id=org.id,
                     email=st_email,
                     username=st_username,
-                    full_name=payload.staff.full_name.strip(),
+                    full_name=st.full_name.strip(),
                     hashed_password=get_password_hash("WelcomePass123!"),
-                    role=payload.staff.role or "front_desk",
+                    role=st.role or "front_desk",
                     email_verified=True,
                     is_active=True,
                     tour_completed=False,
@@ -1027,7 +1054,7 @@ def save_onboarding_data(
                 st_membership = UserOrgMembership(
                     user_id=st_user.id,
                     organization_id=org.id,
-                    role=payload.staff.role or "front_desk",
+                    role=st.role or "front_desk",
                 )
                 db.add(st_membership)
 
