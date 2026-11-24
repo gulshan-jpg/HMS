@@ -1,0 +1,22 @@
+{
+  "name": "checkinos-hotel-pms",
+  "version": "1.0.0",
+  "description": "CheckinOS Hotel Property Management System - Ultra-fast Node.js Engine",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "node api/index.js",
+    "test": "node tests/test_node_api.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

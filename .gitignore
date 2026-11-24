@@ -47,6 +47,9 @@ htmlcov/
 !scripts/*.sql
 .env
 .env.local
+.env.*.local
+node_modules/
+.vercel
 
 # Scratch and diagnostic scripts
 scratch/
