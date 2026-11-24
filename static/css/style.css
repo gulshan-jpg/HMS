@@ -1216,34 +1216,41 @@ input, select, textarea {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 32px !important;
-  min-height: 32px !important;
-  padding: 0 12px !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
   white-space: nowrap !important;
+  word-break: keep-all !important;
   flex-shrink: 0 !important;
+  min-width: max-content !important;
   gap: 6px !important;
   line-height: 1 !important;
   box-sizing: border-box !important;
   border-radius: 6px !important;
-  border: 1px solid var(--border) !important;
+  border: 1px solid #D1D5DB !important;
   background-color: #FFFFFF !important;
-  color: var(--text) !important;
+  color: #1F2937 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  text-decoration: none !important;
 }
 .date-nav-btn:hover {
-  background-color: #F8FAFC !important;
-  border-color: var(--border-strong) !important;
+  background-color: #F9FAFB !important;
+  border-color: #9CA3AF !important;
+  color: #111827 !important;
 }
 .date-nav-btn span {
   white-space: nowrap !important;
+  word-break: keep-all !important;
   line-height: 1 !important;
-  display: inline-block !important;
+  display: inline !important;
 }
 .date-nav-btn svg {
   flex-shrink: 0 !important;
   width: 14px !important;
   height: 14px !important;
+  display: inline-block !important;
 }
 
 .booking-schedule-scroll-box {
@@ -1543,61 +1550,50 @@ textarea.textarea-field {
   display: block;
 }
 
-/* Responsive adjustments */
+/* ── Mobile Phone & Tablet Drawer Mode (<= 1024px) ────────────────────────── */
 @media (max-width: 1024px) {
-  .app-viewport-wrapper {
-    padding: 0;
-  }
-  .app-frame {
-    border-radius: 0;
-    min-height: 100vh;
-  }
-  .sidebar {
-    width: 200px;
-  }
-}
-
-/* ── Mobile Phone & Tablet Drawer Mode (<= 820px) ────────────────────────── */
-@media (max-width: 820px) {
   .mobile-hamburger-btn {
-    display: inline-flex;
+    display: inline-flex !important;
   }
   .mobile-drawer-close-btn {
-    display: inline-flex;
+    display: inline-flex !important;
   }
   .app-viewport-wrapper {
-    padding: 0;
+    padding: 0 !important;
   }
   .app-frame {
-    border-radius: 0;
-    border: none;
-    min-height: 100vh;
-    flex-direction: column;
-    width: 100%;
-    overflow-x: hidden;
+    border-radius: 0 !important;
+    border: none !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
   }
   .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 270px;
-    z-index: 999;
-    background: #FFFFFF;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.35);
-    transform: translateX(-100%);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    z-index: 999 !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.35) !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow-y: auto !important;
   }
   .sidebar.is-open {
-    transform: translateX(0);
+    transform: translateX(0) !important;
   }
   .main-canvas {
-    width: 100%;
-    max-width: 100%;
-    max-height: 100vh;
-    overflow-x: hidden;
-    padding-bottom: 30px;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    overflow-x: hidden !important;
+    padding-bottom: 30px !important;
   }
   .topbar-header {
     padding: 12px 14px 10px;
@@ -1692,73 +1688,111 @@ textarea.textarea-field {
     position: relative !important;
   }
 
-  /* Modals on Mobile & Tablet */
+  /* Modals on Mobile & Tablet: Bottom-sheet anchored layout */
   .modal-backdrop {
-    padding: 8px 6px !important;
-    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px)) !important;
-    align-items: center !important;
+    padding: 0 !important;
+    align-items: flex-end !important;
     justify-content: center !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
+    overflow: hidden !important;
+    touch-action: none !important;
   }
 
   .modal-panel {
     width: 100% !important;
     max-width: 100% !important;
-    max-height: calc(100vh - 16px) !important;
-    max-height: calc(100dvh - 16px) !important;
-    margin: 0 auto !important;
-    border-radius: 12px !important;
+    height: 92vh !important;
+    height: 92dvh !important;
+    max-height: 92vh !important;
+    max-height: 92dvh !important;
+    margin: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.3) !important;
+    overflow: hidden !important;
+    background: #FFFFFF !important;
   }
 
   .modal-header {
-    flex-shrink: 0 !important;
-    padding: 12px 14px !important;
+    flex: 0 0 auto !important;
+    padding: 14px 16px !important;
+    background: #FFFFFF !important;
+    border-bottom: 1px solid var(--border-light) !important;
   }
 
   .modal-title {
     font-size: 15px !important;
+    font-weight: 700 !important;
     line-height: 1.3 !important;
   }
 
   .modal-body {
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
-    max-height: none !important;
-    overflow-y: auto !important;
+    height: auto !important;
+    overflow-y: scroll !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     touch-action: pan-y !important;
     overscroll-behavior-y: contain !important;
-    padding: 14px 14px !important;
+    padding: 16px 16px 24px !important;
+  }
+
+  .modal-body .form-row-2,
+  .modal-body .form-row-3,
+  .modal-body .form-row-3-deposit,
+  .modal-body .row,
+  .modal-body [style*="grid-template-columns"],
+  .modal-body [style*="display: grid"],
+  .drawer-body .form-row-2,
+  .drawer-body .form-row-3,
+  .drawer-body .form-row-3-deposit,
+  .drawer-body .row,
+  .drawer-body [style*="grid-template-columns"],
+  .drawer-body [style*="display: grid"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .modal-body select,
+  .modal-body input,
+  .modal-body textarea,
+  .drawer-body select,
+  .drawer-body input,
+  .drawer-body textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .modal-footer {
-    flex-shrink: 0 !important;
-    position: sticky !important;
+    flex: 0 0 auto !important;
+    position: relative !important;
     bottom: 0 !important;
-    z-index: 20 !important;
+    z-index: 25 !important;
     background: #FFFFFF !important;
     border-top: 1px solid var(--border-light) !important;
-    padding: 10px 14px !important;
-    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.08) !important;
+    padding: 12px 16px !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1) !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 8px !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .modal-footer .btn {
-    flex: 1 1 auto !important;
-    min-height: 40px !important;
-    font-size: 13px !important;
+    flex: 1 1 0% !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    border-radius: 8px !important;
   }
 
   /* Drawers on Mobile */

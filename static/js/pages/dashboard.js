@@ -299,8 +299,8 @@ window.Pages.Dashboard = {
             </div>
           </div>
 
-          <div class="booking-schedule-scroll-box">
-            <table class="calendar-timeline-table" style="min-width:580px; width:100%; table-layout:fixed; margin-bottom:0;">
+          <div class="booking-schedule-scroll-box" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; touch-action: pan-x pan-y; padding-bottom: 6px;">
+            <table class="calendar-timeline-table" style="min-width:620px; width:100%; table-layout:fixed; margin-bottom:0;">
               <thead>
                 <tr>
                   <th style="width: 14%;">Mon</th>
@@ -1009,7 +1009,7 @@ window.openDirectGuestCheckinModal = async () => {
         </select>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+      <div class="form-row-2">
         <div class="form-group">
           <label class="form-label" for="walkin-cin">Check-in Date <span class="required-mark">*</span></label>
           <input type="date" id="walkin-cin" class="input-field" value="${today}" required />
@@ -1020,7 +1020,7 @@ window.openDirectGuestCheckinModal = async () => {
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: var(--space-3);">
+      <div class="form-row-3">
         <div class="form-group">
           <label class="form-label" for="walkin-plan">Rate Plan</label>
           <select id="walkin-plan" class="select-field">
@@ -1054,7 +1054,7 @@ window.openDirectGuestCheckinModal = async () => {
           </span>
           <span style="font-size:11px; color:#059669; font-weight:600;">Folio Credit</span>
         </div>
-        <div style="display: grid; grid-template-columns: 1.2fr 1fr 1.4fr; gap: 8px;">
+        <div class="form-row-3-deposit">
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label" for="walkin-advance-amt">Advance Amount (${getCurrencySymbol()})</label>
             <input type="number" id="walkin-advance-amt" class="input-field font-mono" step="0.01" min="0" placeholder="0.00" />

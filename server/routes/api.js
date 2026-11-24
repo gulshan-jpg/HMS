@@ -347,4 +347,25 @@ router.post('/demo-request', (req, res) => {
   });
 });
 
+// ── 12. Onboarding Save & Config ─────────────────────────────────────────────
+router.post('/onboarding/save', (req, res) => {
+  try {
+    const result = store.saveOnboardingData(req.body);
+    return res.json(result);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
+router.get('/onboarding/config', (req, res) => {
+  return res.json({
+    org: store.getOrg(),
+    room_types: store.getRoomTypes(),
+    rooms: store.getRooms(),
+    rate_plans: store.getRatePlans(),
+    taxes: store.getTaxes(),
+    users: store.getUsers()
+  });
+});
+
 module.exports = router;

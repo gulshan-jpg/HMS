@@ -60,12 +60,75 @@ app.get('/login', (req, res) => {
   }
 });
 
-app.get('/demo', (req, res) => {
+app.get(['/demo', '/request-demo'], (req, res) => {
   try {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(renderTemplate('demo.html'));
   } catch (e) {
     res.status(500).send("Error rendering demo page: " + e.message);
+  }
+});
+
+app.get('/signup', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('signup.html'));
+  } catch (e) {
+    res.status(500).send("Error rendering signup page: " + e.message);
+  }
+});
+
+app.get('/welcome', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('welcome.html'));
+  } catch (e) {
+    res.status(500).send("Error rendering welcome onboarding page: " + e.message);
+  }
+});
+
+app.get('/locked', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('locked.html'));
+  } catch (e) {
+    res.status(500).send("Error rendering locked page: " + e.message);
+  }
+});
+
+app.get('/hk/:token', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('mobile_hk.html', { token: req.params.token }));
+  } catch (e) {
+    res.status(500).send("Error rendering mobile housekeeping page: " + e.message);
+  }
+});
+
+app.get('/legal/terms', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('legal_terms.html'));
+  } catch (e) {
+    res.status(500).send("Error rendering terms page: " + e.message);
+  }
+});
+
+app.get('/legal/privacy', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('legal_privacy.html'));
+  } catch (e) {
+    res.status(500).send("Error rendering privacy page: " + e.message);
+  }
+});
+
+app.get('/legal/dpa', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(renderTemplate('legal_dpa.html'));
+  } catch (e) {
+    res.status(500).send("Error rendering DPA page: " + e.message);
   }
 });
 
@@ -109,6 +172,7 @@ app.get('/changelog', (req, res) => {
 const appRoutes = [
   '/app',
   '/bookings',
+  '/reservations',
   '/rooms',
   '/rate-calendar',
   '/timeline',
@@ -121,7 +185,8 @@ const appRoutes = [
   '/policies',
   '/settings',
   '/billing',
-  '/guests'
+  '/guests',
+  '/import'
 ];
 
 appRoutes.forEach(route => {

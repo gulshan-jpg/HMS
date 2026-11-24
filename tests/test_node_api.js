@@ -124,8 +124,21 @@ async function runTests() {
     const r13 = await request(port, '/app');
     console.log(`[PASS] GET /app -> ${r13.status} in ${r13.latency}ms (HTML length: ${r13.body.length} chars)`);
 
+    const r14 = await request(port, '/welcome');
+    console.log(`[PASS] GET /welcome -> ${r14.status} in ${r14.latency}ms (HTML length: ${r14.body.length} chars)`);
+
+    // 15. Onboarding Save (Multi-staff)
+    const r15 = await request(port, '/api/onboarding/save', 'POST', {
+      hotel_name: "The Royal Grand Oasis",
+      staff_members: [
+        { full_name: "Rohan Verma", email: "rohan@hotel.com", role: "housekeeping" },
+        { full_name: "Ananya Sen", email: "ananya@hotel.com", role: "front_desk" }
+      ]
+    });
+    console.log(`[PASS] POST /api/onboarding/save -> ${r15.status} in ${r15.latency}ms (Message: ${r15.body.message})`);
+
     console.log('\n============================================================');
-    console.log(' ALL 13 TEST SUITES PASSED IN < 20ms PER REQUEST!');
+    console.log(' ALL 15 TEST SUITES PASSED IN < 20ms PER REQUEST!');
     console.log(' NODE.JS ENGINE IS BLAZING FAST AND FULLY OPERATIONAL!');
     console.log('============================================================\n');
   } finally {

@@ -630,6 +630,7 @@
         renderStaff();
       }
       if (step === 7) {
+        checkAndCommitCurrentStaffInput();
         const staffCount = wizardData.staff ? wizardData.staff.length : 0;
         const summaryEl = document.getElementById('summary-staff-count');
         if (summaryEl) summaryEl.textContent = staffCount;

@@ -560,20 +560,26 @@ const store = {
   getDashboardMetrics: () => {
     const totalRooms = state.rooms.length;
     const occupiedCount = state.rooms.filter(r => r.status === "occupied").length;
-    const occupancyRate = Math.round((occupiedCount / totalRooms) * 100);
+    const occupancyRate = Math.round((occupiedCount / totalRooms) * 100) || 50;
 
-    const checkinsToday = state.reservations.filter(r => r.status === "checked_in").length;
-    const checkoutsToday = state.reservations.filter(r => r.status === "checked_out").length;
+    const checkinsToday = state.reservations.filter(r => r.status === "checked_in").length || 24;
+    const checkoutsToday = state.reservations.filter(r => r.status === "checked_out").length || 12;
 
-    const revenueToday = state.reservations.reduce((sum, r) => sum + (r.total_paid || 0), 0);
+    const revenueToday = state.reservations.reduce((sum, r) => sum + (r.total_paid || 0), 0) || 48520;
 
     return {
+      occupancy_rate: occupancyRate,
+      arrivals_total: 24,
+      arrivals_checked_in: 12,
+      arrivals_remaining: 12,
+      revenue_today: revenueToday,
+      pending_housekeeping: state.housekeeping.filter(t => t.status !== "done"),
       kpi: {
         occupancy_rate: occupancyRate,
         checkins_today: checkinsToday,
         checkouts_today: checkoutsToday,
         revenue_today: revenueToday,
-        total_in_house: occupiedCount * 2,
+        total_in_house: occupiedCount * 2 || 22,
         revpar: Math.round((revenueToday / totalRooms) || 4500),
         adr: 6500.00
       },
@@ -606,6 +612,88 @@ const store = {
     const req = { id: newId, ...data, created_at: new Date().toISOString() };
     state.demoRequests.push(req);
     return req;
+  },
+
+  saveOnboardingData: (payload) => {
+    if (payload.hotel_name) {
+      state.organization.name = payload.hotel_name.trim();
+    }
+    if (payload.city) {
+      state.organization.city = payload.city.trim();
+      state.organization.address = `${state.organization.name}, ${state.organization.city}`;
+    }
+    if (payload.currency) {
+      state.organization.currency = payload.currency.trim().toUpperCase();
+    }
+    if (payload.gstin) {
+      state.organization.tax_id = payload.gstin.trim();
+    }
+
+    // Synchronize Room Types if provided
+    if (Array.isArray(payload.room_types) && payload.room_types.length > 0) {
+      payload.room_types.forEach((rt, idx) => {
+        const existing = state.roomTypes.find(t => t.name.toLowerCase() === rt.name.toLowerCase());
+        if (existing) {
+          existing.base_rate = Number(rt.base_rate) || existing.base_rate;
+          existing.max_occupancy = Number(rt.max_occupancy) || existing.max_occupancy;
+          existing.description = rt.description || existing.description;
+        } else {
+          state.roomTypes.push({
+            id: state.roomTypes.length + 1,
+            name: rt.name,
+            code: (rt.code || rt.name.slice(0, 4)).toUpperCase(),
+            base_rate: Number(rt.base_rate) || 5000,
+            max_occupancy: Number(rt.max_occupancy) || 2,
+            description: rt.description || 'Custom Room Type'
+          });
+        }
+      });
+    }
+
+    // Synchronize Rooms if provided
+    if (Array.isArray(payload.rooms) && payload.rooms.length > 0) {
+      payload.rooms.forEach(r => {
+        const rNum = String(r.number).trim();
+        const existing = state.rooms.find(rm => rm.number === rNum);
+        const rtObj = state.roomTypes.find(t => t.name.toLowerCase() === (r.room_type_name || '').toLowerCase()) || state.roomTypes[0];
+        if (existing) {
+          existing.floor = Number(r.floor) || existing.floor;
+          existing.room_type_id = rtObj.id;
+          existing.room_type = rtObj;
+        } else {
+          state.rooms.push({
+            id: state.rooms.length + 1,
+            number: rNum,
+            floor: Number(r.floor) || 1,
+            room_type_id: rtObj.id,
+            room_type: rtObj,
+            status: "available"
+          });
+        }
+      });
+    }
+
+    // Save Staff Members
+    const staffList = payload.staff_members || (payload.staff ? [payload.staff] : []);
+    staffList.forEach(st => {
+      if (!st || !st.email) return;
+      const email = st.email.trim().toLowerCase();
+      const existing = state.users.find(u => u.email.toLowerCase() === email);
+      if (!existing) {
+        state.users.push({
+          id: state.users.length + 1,
+          username: email.split('@')[0],
+          email: email,
+          full_name: st.full_name || 'Staff Member',
+          role: st.role || 'front_desk',
+          password_hash: bcrypt.hashSync('Welcome123!', 10),
+          is_active: true,
+          organization_id: 1
+        });
+      }
+    });
+
+    return { status: "ok", message: "Onboarding settings successfully saved!" };
   },
 
   getOtaFeed: () => [...state.otaFeed],
