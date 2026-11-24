@@ -43,6 +43,7 @@ htmlcov/
 *.db-wal
 *.sqlite
 *.sqlite3
+*.sql
 .env
 .env.local
 
@@ -55,3 +56,5 @@ htmlcov/
 # OS files
 .DS_Store
 Thumbs.db
+
+.vercel

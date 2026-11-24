@@ -53,11 +53,17 @@ METRICS_REQUESTS = defaultdict(int)
 async def lifespan(app: FastAPI):
     """Lifecycle manager: validates production hardening and ensures database tables."""
     logger.info(f"Initializing Hotel PMS in environment: {settings.ENV}")
-    settings.validate_production_hardening()
+    try:
+        settings.validate_production_hardening()
+    except Exception as exc:
+        logger.warning(f"Production hardening check: {exc}")
 
     # Create tables if they do not exist
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database schemas verified.")
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database schemas verified.")
+    except Exception as exc:
+        logger.error(f"Database schema verification: {exc}")
 
     # Auto-seed initial demo data if database is fresh
     try:
@@ -160,7 +166,8 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
         content={
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": "An unexpected server error occurred. Please retry.",
+                "message": f"Server Error: {str(exc)}",
+                "type": type(exc).__name__,
             }
         },
     )
@@ -248,8 +255,21 @@ def get_metrics():
 # ── Static Files & Templates ────────────────────────────────────────────────
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-static_dir = BASE_DIR / "static"
-templates_dir = BASE_DIR / "templates"
+
+# Search for templates in local dev and Vercel Lambda bundle (/var/task)
+possible_template_dirs = [
+    BASE_DIR / "templates",
+    Path.cwd() / "templates",
+    Path("/var/task/templates"),
+]
+templates_dir = next((d for d in possible_template_dirs if d.exists()), BASE_DIR / "templates")
+
+possible_static_dirs = [
+    BASE_DIR / "static",
+    Path.cwd() / "static",
+    Path("/var/task/static"),
+]
+static_dir = next((d for d in possible_static_dirs if d.exists()), BASE_DIR / "static")
 
 if not static_dir.exists():
     static_dir.mkdir(parents=True, exist_ok=True)

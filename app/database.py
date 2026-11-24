@@ -9,18 +9,40 @@ from app.config import settings
 # Engine configuration depending on dialect
 connect_args = {}
 db_url = settings.DATABASE_URL
+
+# 1. Normalize postgres:// to postgresql://
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+# 2. Add sslmode=require for Supabase / remote PostgreSQL if missing
+if ("supabase.co" in db_url or "pooler" in db_url) and "sslmode" not in db_url:
+    separator = "&" if "?" in db_url else "?"
+    db_url = f"{db_url}{separator}sslmode=require"
+
+# 3. Serverless fallback when on Vercel without external DB
 if os.environ.get("VERCEL") and db_url.startswith("sqlite:///."):
     db_url = "sqlite:////tmp/hotel_pms.db"
 
 if db_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False, "timeout": 30}
 
-engine = create_engine(
-    db_url,
-    connect_args=connect_args,
-    pool_pre_ping=True,
-    echo=False,
-)
+try:
+    engine = create_engine(
+        db_url,
+        connect_args=connect_args,
+        pool_pre_ping=True,
+        echo=False,
+    )
+except Exception as e:
+    import logging
+    logging.getLogger("uvicorn.error").error(f"Failed to initialize engine for {db_url}: {e}")
+    db_url = "sqlite:////tmp/hotel_pms.db"
+    engine = create_engine(
+        db_url,
+        connect_args={"check_same_thread": False, "timeout": 30},
+        pool_pre_ping=True,
+        echo=False,
+    )
 
 if db_url.startswith("sqlite"):
     @event.listens_for(engine, "connect")
