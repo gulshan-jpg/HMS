@@ -392,6 +392,17 @@ const UI = {
 
     return isValid;
   },
+
+  // ── Debounce Utility ───────────────────────────────────────────────────────
+  debounce(fn, delay = 250) {
+    let timer = null;
+    return function (...args) {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+      }, delay);
+    };
+  },
 };
 
 // Check for flash toast in sessionStorage (e.g. from redirect)
