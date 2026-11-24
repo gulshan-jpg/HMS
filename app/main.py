@@ -288,6 +288,8 @@ templates = Jinja2Templates(directory=existing_template_dirs)
 # ── Public Marketing & Trust Pages ──────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/api/index.py", response_class=HTMLResponse)
+@app.get("/api/index", response_class=HTMLResponse)
 def serve_landing(request: Request):
     """Render public marketing landing page."""
     return templates.TemplateResponse(
