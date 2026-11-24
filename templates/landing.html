@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ hotel_name }} — The Modern Hotel Property Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --border-strong: #D1D5DB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --accent: #111827;
+      --accent-hover: #1F2937;
+      --success: #059669;
+      --success-bg: #ECFDF5;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Header Nav (Black with white words) */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      background: #000000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      z-index: 50;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+    }
+    .nav-brand a { color: #FFFFFF; }
+    .brand-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #E5E7EB;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+    .nav-links a {
+      color: #FFFFFF;
+      transition: opacity 0.15s ease;
+    }
+    .nav-links a:hover {
+      opacity: 0.8;
+      color: #FFFFFF;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-actions .btn-secondary {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+    }
+    .nav-actions .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #FFFFFF;
+    }
+    .nav-actions .btn-primary {
+      background: #FFFFFF;
+      color: #000000;
+      font-weight: 600;
+      border-color: #FFFFFF;
+    }
+    .nav-actions .btn-primary:hover {
+      background: #F3F4F6;
+      color: #000000;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+    .btn-secondary {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: var(--surface-alt);
+      border-color: var(--border-strong);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #FFFFFF;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    .btn-lg {
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 72px 24px 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .hero-badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .hero h1 {
+      font-size: 48px;
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      max-width: 840px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .hero-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    .hero-trust svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* Mockup Showcase */
+    .mockup-container {
+      max-width: 1140px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .mockup-frame {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    .mockup-header {
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-strong);
+    }
+    .mockup-url {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: #FFFFFF;
+      padding: 4px 16px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      margin-left: 12px;
+      flex: 1;
+      max-width: 380px;
+    }
+    .mockup-body {
+      padding: 24px;
+      background: #FFFFFF;
+      text-align: left;
+    }
+    .grid-preview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-box {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+    }
+    .kpi-title { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+    .kpi-val { font-size: 22px; font-weight: 700; font-family: var(--font-mono); }
+    .kpi-sub { font-size: 11px; color: var(--success); margin-top: 4px; }
+
+    /* Features Grid */
+    .section-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+    .section-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 48px;
+    }
+    .section-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .section-header p {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: #000000;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      padding: 28px;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      transition: all 0.2s ease;
+    }
+    .feature-card:hover {
+      border-color: rgba(255, 255, 255, 0.32);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .feature-icon svg {
+      stroke: #FFFFFF;
+    }
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: #E5E7EB;
+      line-height: 1.6;
+    }
+
+    /* Testimonials */
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 36px;
+    }
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+    }
+    .testimonial-quote {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .author-name { font-weight: 600; font-size: 14px; }
+    .author-role { font-size: 12px; color: var(--text-secondary); }
+
+    /* CTA Banner */
+    .cta-banner {
+      background: var(--accent);
+      color: #FFFFFF;
+      border-radius: 12px;
+      padding: 56px 40px;
+      text-align: center;
+      margin: 48px auto;
+      max-width: 1140px;
+    }
+    .cta-banner h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .cta-banner p {
+      font-size: 16px;
+      color: #D1D5DB;
+      max-width: 580px;
+      margin: 0 auto 28px;
+    }
+    .btn-white {
+      background: #FFFFFF;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .btn-white:hover {
+      background: #F3F4F6;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 56px 24px 36px;
+      margin-top: 64px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand h4 { font-size: 17px; font-weight: 700; margin-bottom: 12px; }
+    .footer-brand p { font-size: 14px; color: var(--text-secondary); max-width: 320px; line-height: 1.6; }
+    .footer-col h5 { font-size: 13px; text-transform: uppercase; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 16px; letter-spacing: 0.05em; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a { font-size: 14px; color: var(--text-secondary); }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 34px; }
+      .grid-preview { grid-template-columns: 1fr 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .testimonial-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <span>CheckinOS</span>
+        <span class="brand-badge">PMS</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/security">Security</a>
+        <a href="/status">Status</a>
+        <a href="/changelog">Changelog</a>
+      </div>
+      <div class="nav-actions">
+        <a href="/login" class="btn btn-secondary" id="nav-signin-link">Sign in</a>
+        <a href="/signup" class="btn btn-primary">Start 14-day free trial</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      <span>v1.0 Commercial SaaS Platform Live · Developed by Gulshan</span>
+    </div>
+    <h1>The Modern Hotel Operating System for Independent Properties</h1>
+    <p>
+      Replace legacy, sluggish software with a fast, intuitive PMS built for modern boutique hotels, resorts, and heritage stays. Zero installation, zero training required.
+    </p>
+    <div class="hero-ctas">
+      <a href="/signup" class="btn btn-primary btn-lg">Start 14-day free trial</a>
+      <a href="/login" class="btn btn-secondary btn-lg">Explore Live Demo</a>
+    </div>
+    <div class="hero-trust">
+      <span>14-day free trial</span>
+      <span>•</span>
+      <span>No credit card required</span>
+      <span>•</span>
+      <span>Instant setup with demo data</span>
+    </div>
+  </header>
+
+  <!-- Product Preview Showcase -->
+  <div class="mockup-container">
+    <div class="mockup-frame">
+      <div class="mockup-header">
+        <div class="mockup-dot"></div>
+        <div class="mockup-dot"></div>
+        <div class="mockup-dot"></div>
+        <div class="mockup-url">https://grandpalace.checkinos.io/app</div>
+      </div>
+      <div class="mockup-body">
+        <div class="grid-preview">
+          <div class="kpi-box">
+            <div class="kpi-title">Occupancy Rate</div>
+            <div class="kpi-val">87.5%</div>
+            <div class="kpi-sub">+4.2% vs last week</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">Today's Arrivals</div>
+            <div class="kpi-val">14</div>
+            <div class="kpi-sub">8 processed • 6 remaining</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">Today's Revenue</div>
+            <div class="kpi-val">₹98,450</div>
+            <div class="kpi-sub">Avg Rate ₹7,250/night</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">Pending Housekeeping</div>
+            <div class="kpi-val">5</div>
+            <div class="kpi-sub">Turnover clean in progress</div>
+          </div>
+        </div>
+
+        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 18px; background: var(--surface-alt);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <strong style="font-size: 14px;">Recent Front Desk Activity</strong>
+            <span style="font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono);">Real-time Sync Active</span>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="text-align: left; color: var(--text-secondary); border-bottom: 1px solid var(--border);">
+                <th style="padding: 8px 0;">Guest</th>
+                <th>Room</th>
+                <th>Dates</th>
+                <th>Rate Plan</th>
+                <th>Folio Balance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 10px 0; font-weight: 500;">Rahul Sharma</td>
+                <td><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">201</span></td>
+                <td>Nov 24 – Nov 28 (4 nights)</td>
+                <td>Bed & Breakfast</td>
+                <td style="font-family: var(--font-mono);">₹0.00 (Paid)</td>
+                <td><span style="color: var(--success); font-weight: 500;">Checked In</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 10px 0; font-weight: 500;">Priya Patel</td>
+                <td><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">301</span></td>
+                <td>Nov 24 – Nov 26 (2 nights)</td>
+                <td>Flexible Rate</td>
+                <td style="font-family: var(--font-mono);">₹15,000.00</td>
+                <td><span style="color: #2563EB; font-weight: 500;">Confirmed</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; font-weight: 500;">Vikram Malhotra</td>
+                <td><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">105</span></td>
+                <td>Nov 20 – Nov 24 (4 nights)</td>
+                <td>Long Stay 7+</td>
+                <td style="font-family: var(--font-mono);">₹0.00 (Settled)</td>
+                <td><span style="color: var(--text-secondary); font-weight: 500;">Checked Out</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section id="features" class="section-wrap">
+    <div class="section-header">
+      <h2>Everything required to operate your hotel</h2>
+      <p>Purpose-built for hospitality workflows without the clutter of outdated legacy systems.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+        <h3>Availability Gantt & Timeline</h3>
+        <p>Interactive multi-room reservation timeline. Drag-and-drop room assignments with strict overlap collision prevention.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <h3>Front Desk & 45-Sec Check-in</h3>
+        <p>Process arrivals in seconds. ID document tracking, digital registration cards, room keys, and automated deposit management.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        </div>
+        <h3>Mobile Housekeeping Link</h3>
+        <p>Cleaning staff receive secure 24-hour links on their phones without passwords. One-tap room cleaning updates and maintenance reporting.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <h3>Split Folios & GST Billing</h3>
+        <p>Split charges between corporate company folios and guest incidentals. Instant professional A4 tax invoices with sequential numbering.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <h3>Dynamic Rate Plans & Policies</h3>
+        <p>Configure flexible, non-refundable, and bed & breakfast plans. Automated cancellation penalties and refund calculations.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <h3>One-Click Night Audit</h3>
+        <p>Roll business dates forward with automated room charge posting, tax accruals, daily balance verification, and manager reports.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section-wrap" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="section-header">
+      <h2>Trusted by hospitality leaders</h2>
+      <p>Independent hotels and boutique resorts rely on CheckinOS every single day.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">
+          "We cut front desk check-in times from 7 minutes to under 45 seconds. Our staff was fully proficient within 20 minutes without any expensive on-site training."
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">VS</div>
+          <div>
+            <div class="author-name">Vikram Singhania</div>
+            <div class="author-role">General Manager, The Heritage Palace Jaipur</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">
+          "The mobile housekeeping view is phenomenal. Housekeeping staff don't need user logins—they tap the link on their WhatsApp and update room turnovers in real time."
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">AD</div>
+          <div>
+            <div class="author-name">Ananya Desai</div>
+            <div class="author-role">Owner & Founder, Verve Stays Goa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>Ready to modernise your hotel operations?</h2>
+    <p>Sign up in 30 seconds. Your account comes pre-configured with realistic sample rooms, rate plans, and guest bookings so you can explore immediately.</p>
+    <a href="/signup" class="btn btn-white btn-lg">Start your 14-day free trial</a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>CheckinOS</h4>
+        <p>The modern, cloud-native hotel operating system engineered for independent boutique hotels and hospitality groups.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="/app">PMS Dashboard</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/status">System Status</a></li>
+          <li><a href="/changelog">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Trust & Security</h5>
+        <ul>
+          <li><a href="/security">Security Architecture</a></li>
+          <li><a href="/legal/terms">Terms of Service</a></li>
+          <li><a href="/legal/privacy">Privacy Policy</a></li>
+          <li><a href="/legal/dpa">Data Processing (DPA)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a href="mailto:support@checkinos.io">support@checkinos.io</a></li>
+          <li><a href="/login">Hotelier Login</a></li>
+          <li><a href="/signup">Free Trial</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 CheckinOS Technologies Pvt. Ltd. All rights reserved.</div>
+      <div>Designed with precision for modern hoteliers · Developed by <strong>Gulshan</strong></div>
+    </div>
+  </footer>
+
+  <script>
+    if (localStorage.getItem('access_token')) {
+      const link = document.getElementById('nav-signin-link');
+      if (link) {
+        link.textContent = 'Go to Dashboard →';
+        link.href = '/app';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: hotel_pms_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hotel_pms}
+      POSTGRES_USER: ${POSTGRES_USER:-pms_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pms_secure_pass_2025}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pms_user} -d ${POSTGRES_DB:-hotel_pms}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotel_pms_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      ENV: ${ENV:-prod}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-pms_user}:${POSTGRES_PASSWORD:-pms_secure_pass_2025}@db:5432/${POSTGRES_DB:-hotel_pms}
+      SECRET_KEY: ${SECRET_KEY:-production-pms-super-secret-key-32chars-min-entropy}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
+      HOTEL_NAME: ${HOTEL_NAME:-Grand Azure Hotel & Residences}
+      HOTEL_ADDRESS: ${HOTEL_ADDRESS:-742 Evergreen Promenade, Monterey, CA 93940}
+      HOTEL_CURRENCY: ${HOTEL_CURRENCY:-USD}
+      HOTEL_TIMEZONE: ${HOTEL_TIMEZONE:-America/Los_Angeles}
+    volumes:
+      - .:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:

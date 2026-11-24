@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In · CheckinOS PMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/print.css" media="print">
+  <style>
+    .login-viewport {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      padding: 36px 32px;
+    }
+    .brand-mark-circle {
+      width: 40px;
+      height: 40px;
+      background: var(--brand-primary);
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      margin-bottom: 12px;
+    }
+    .login-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: -0.01em;
+    }
+    .login-header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      margin-bottom: 24px;
+    }
+    .error-alert-banner {
+      background-color: var(--danger-bg);
+      border: 1px solid #FCA5A5;
+      color: var(--danger);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+  </style>
+</head>
+<body class="login-viewport">
+  <div class="login-card">
+    <div class="login-header" style="text-align: center;">
+      <div class="brand-mark-circle">
+        <svg style="width:20px; height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+        </svg>
+      </div>
+      <h1>Sign in to CheckinOS</h1>
+      <p>{{ hotel_name }}</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="login-error-banner" class="error-alert-banner"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="login-ident">Email or Username <span style="color:var(--danger);">*</span></label>
+        <input
+          type="text"
+          id="login-ident"
+          class="input-field"
+          placeholder="admin or staff@grandpavilion.in"
+          required
+          autofocus
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <label class="form-label" for="login-pw">Password <span style="color:var(--danger);">*</span></label>
+          <a href="#" id="forgot-pw-link" style="font-size: 11px; color: var(--text-secondary);">Forgot password?</a>
+        </div>
+        <input
+          type="password"
+          id="login-pw"
+          class="input-field"
+          placeholder="••••••••••••"
+          required
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button type="submit" id="login-submit-btn" class="btn btn-primary btn-md" style="width: 100%; height: 40px; margin-top: 8px;">
+        Sign In
+      </button>
+
+      <!-- 1-Click Demo Credentials Quick Fill -->
+      <div style="margin-top: 20px; padding: 12px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;">
+        <div style="font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; text-align: center;">
+          Quick Demo Accounts
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="fillCredentials('admin', 'admin123')" style="font-size: 11px; height: 32px; justify-content: center;">
+            Admin Demo
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="fillCredentials('staff', 'staff123')" style="font-size: 11px; height: 32px; justify-content: center;">
+            Staff Demo
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; font-size: 12px; color: var(--text-tertiary);">
+      &copy; 2026 CheckinOS PMS · Commercial SaaS v1.0 · Developed by <strong style="color: var(--text); font-weight: 600;">Gulshan</strong>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/ui.js"></script>
+  <script>
+    window.fillCredentials = (ident, pw) => {
+      document.getElementById('login-ident').value = ident;
+      document.getElementById('login-pw').value = pw;
+      document.getElementById('login-error-banner').style.display = 'none';
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (API.getToken()) {
+        window.location.href = '/app';
+        return;
+      }
+
+      const form = document.getElementById('login-form');
+      const errBanner = document.getElementById('login-error-banner');
+      const submitBtn = document.getElementById('login-submit-btn');
+      const forgotLink = document.getElementById('forgot-pw-link');
+
+      forgotLink.onclick = (e) => {
+        e.preventDefault();
+        UI.toast('Contact property administrator or system manager for password recovery.', 'info');
+      };
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        errBanner.style.display = 'none';
+
+        if (!UI.validateForm(form)) return;
+
+        const ident = document.getElementById('login-ident').value.trim();
+        const pw = document.getElementById('login-pw').value;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in...';
+
+        try {
+          await API.login(ident, pw);
+          window.location.href = '/app';
+        } catch (err) {
+          errBanner.textContent = err.message || 'Invalid credentials provided.';
+          errBanner.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+        }
+      };
+    });
+  </script>
+</body>
+</html>
