@@ -81,6 +81,9 @@ const UI = {
 
     this.previousActiveElement = document.activeElement;
 
+    // Lock background scroll on mobile and desktop
+    document.body.classList.add('modal-open');
+
     const backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop';
     backdrop.id = 'active-modal-backdrop';
@@ -133,6 +136,7 @@ const UI = {
   },
 
   closeModal() {
+    document.body.classList.remove('modal-open');
     if (this.activeModal) {
       const { backdrop, onClose } = this.activeModal;
       backdrop.classList.remove('is-open');
@@ -151,6 +155,9 @@ const UI = {
 
   drawer({ title, subtitle = '', contentHtml, footerHtml = '', onClose = null }) {
     this.closeDrawer();
+
+    // Lock background scroll on mobile and desktop
+    document.body.classList.add('drawer-open');
 
     const backdrop = document.createElement('div');
     backdrop.className = 'drawer-backdrop';
@@ -195,6 +202,7 @@ const UI = {
   },
 
   closeDrawer() {
+    document.body.classList.remove('drawer-open');
     if (this.activeDrawer) {
       const { backdrop, panel } = this.activeDrawer;
       backdrop.classList.remove('is-open');
