@@ -300,10 +300,11 @@
           return;
         }
 
-        // Store JWT token
+        // Store JWT token and session user
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user_role", data.user.role);
         localStorage.setItem("user_name", data.user.full_name);
+        localStorage.setItem("current_user", JSON.stringify(data.user));
         localStorage.setItem("org_slug", data.organization.slug);
         localStorage.setItem("org_name", data.organization.name);
 

@@ -5,6 +5,7 @@ import re
 import secrets
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.auth import create_access_token, get_password_hash, verify_password
@@ -445,6 +446,31 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
     db.flush()
 
 
+def sync_postgres_sequences(db: Session) -> None:
+    """Synchronizes PostgreSQL auto-increment sequences with current max primary keys to prevent duplicate key violations."""
+    if db.bind and db.bind.dialect.name == "postgresql":
+        for tbl in ["organizations", "users", "user_org_memberships", "rooms", "room_types", "rate_plans", "tax_rates", "guests", "reservations", "folios", "folio_items", "payments", "housekeeping_tasks"]:
+            try:
+                db.execute(text(f"""
+                    DO $$
+                    DECLARE
+                        seq text;
+                        max_val bigint;
+                    BEGIN
+                        seq := pg_get_serial_sequence('{tbl}', 'id');
+                        IF seq IS NOT NULL THEN
+                            EXECUTE 'SELECT COALESCE(MAX(id), 0) FROM ' || quote_ident('{tbl}') INTO max_val;
+                            IF max_val > 0 THEN
+                                PERFORM setval(seq, max_val, true);
+                            END IF;
+                        END IF;
+                    END $$;
+                """))
+                db.commit()
+            except Exception:
+                db.rollback()
+
+
 @router.post("/signup", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 def signup_hotel_organization(
     payload: SignupRequest,
@@ -460,6 +486,9 @@ def signup_hotel_organization(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="An account with this email address already exists. Please sign in.",
         )
+
+    # Proactively align PostgreSQL sequences to prevent duplicate key collisions from legacy seeds
+    sync_postgres_sequences(db)
 
     try:
         # 1. Create Organization

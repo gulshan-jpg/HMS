@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Register SPA routes
   Router.register('/', (container) => window.Pages.Dashboard.render(container));
+  Router.register('/app', (container) => window.Pages.Dashboard.render(container));
   Router.register('/bookings', (container) => window.Pages.Reservations.render(container));
   Router.register('/reservations', (container) => window.Pages.Reservations.render(container));
   Router.register('/rooms', (container) => window.Pages.Rooms.render(container));

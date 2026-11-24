@@ -153,9 +153,12 @@ window.Pages.Housekeeping = {
     const inProgress = filtered.filter(t => t.status === 'in_progress');
     const done = filtered.filter(t => t.status === 'done');
 
-    document.getElementById('count-pending').textContent = pending.length;
-    document.getElementById('count-in-progress').textContent = inProgress.length;
-    document.getElementById('count-done').textContent = done.length;
+    const elPending = document.getElementById('count-pending');
+    const elInProgress = document.getElementById('count-in-progress');
+    const elDone = document.getElementById('count-done');
+    if (elPending) elPending.textContent = pending.length;
+    if (elInProgress) elInProgress.textContent = inProgress.length;
+    if (elDone) elDone.textContent = done.length;
 
     const renderCard = (task) => `
       <div class="kanban-card" data-task-id="${task.id}">

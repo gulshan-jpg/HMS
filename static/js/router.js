@@ -47,6 +47,9 @@ const Router = {
     if (p.length > 1 && p.endsWith('/')) {
       p = p.slice(0, -1);
     }
+    if (p === '/app') {
+      return '/';
+    }
     return p || '/';
   },
 
