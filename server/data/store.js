@@ -696,6 +696,106 @@ const store = {
     return { status: "ok", message: "Onboarding settings successfully saved!" };
   },
 
+  getRateCalendar: (startDateStr, daysCount = 30) => {
+    const sDate = startDateStr ? new Date(startDateStr) : new Date();
+    const days = Math.min(Math.max(Number(daysCount) || 30, 7), 60);
+
+    const roomTypes = state.roomTypes.map(rt => {
+      const totalRoomsOfType = state.rooms.filter(r => r.room_type_id === rt.id).length || 5;
+      const daysArr = [];
+
+      for (let i = 0; i < days; i++) {
+        const d = new Date(sDate);
+        d.setDate(sDate.getDate() + i);
+        const dateIso = d.toISOString().slice(0, 10);
+        const dayOfWeek = d.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+        // Occasional weekend rate surge (+20%)
+        const rate = isWeekend ? Math.round(rt.base_rate * 1.2) : rt.base_rate;
+        // Occupied count mock based on reservations
+        const occCount = state.reservations.filter(r => {
+          return r.room && r.room.room_type && r.room.room_type.name === rt.name &&
+            r.check_in_date <= dateIso && r.check_out_date > dateIso;
+        }).length;
+        const occ = Math.min(occCount || (isWeekend ? 3 : 1), totalRoomsOfType);
+        const avail = Math.max(totalRoomsOfType - occ, 0);
+
+        daysArr.push({
+          date: dateIso,
+          rate: rate,
+          available: avail,
+          total: totalRoomsOfType,
+          occupancy_pct: Math.round((occ / totalRoomsOfType) * 100),
+          min_stay: isWeekend ? 2 : 1,
+          stop_sell: false,
+          is_override: isWeekend
+        });
+      }
+
+      return {
+        id: rt.id,
+        name: rt.name,
+        code: rt.code,
+        base_rate: rt.base_rate,
+        days: daysArr
+      };
+    });
+
+    const eDate = new Date(sDate);
+    eDate.setDate(sDate.getDate() + days);
+
+    return {
+      start_date: sDate.toISOString().slice(0, 10),
+      end_date: eDate.toISOString().slice(0, 10),
+      room_types: roomTypes
+    };
+  },
+
+  getTimeline: (startDateStr, daysCount = 30) => {
+    const sDate = startDateStr ? new Date(startDateStr) : new Date();
+    const days = Math.min(Math.max(Number(daysCount) || 30, 7), 60);
+    const eDate = new Date(sDate);
+    eDate.setDate(sDate.getDate() + days);
+    const startIso = sDate.toISOString().slice(0, 10);
+    const endIso = eDate.toISOString().slice(0, 10);
+
+    const rooms = state.rooms.map(r => {
+      const roomRes = state.reservations.filter(res => {
+        return (res.room_id === r.id || (res.room && res.room.number === r.number)) &&
+          res.check_in_date < endIso && res.check_out_date > startIso;
+      }).map(res => {
+        const guestName = res.guest ? `${res.guest.first_name} ${res.guest.last_name}` : "Guest";
+        const initials = guestName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'G';
+        return {
+          id: res.id,
+          confirmation_number: res.confirmation_number,
+          guest_name: guestName,
+          guest_initials: initials,
+          check_in_date: res.check_in_date,
+          check_out_date: res.check_out_date,
+          status: res.status,
+          balance: res.balance_due || 0
+        };
+      });
+
+      return {
+        id: r.id,
+        number: r.number,
+        floor: r.floor || 1,
+        room_type_name: r.room_type ? r.room_type.name : 'Deluxe',
+        status: r.status,
+        reservations: roomRes
+      };
+    });
+
+    return {
+      start_date: startIso,
+      end_date: endIso,
+      rooms: rooms
+    };
+  },
+
   getOtaFeed: () => [...state.otaFeed],
 
   simulateOtaInboxSync: (voucher) => {

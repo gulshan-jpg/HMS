@@ -285,8 +285,26 @@
       font-weight: 500;
     }
     @media (max-width: 640px) {
+      .row {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
       .item-pill-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+      }
+      .staff-input-action-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+      }
+      .staff-input-action-row .btn {
+        width: 100% !important;
+        height: 44px !important;
+      }
+      .staff-input-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 4px !important;
       }
     }
 
@@ -503,7 +521,7 @@
       
       <!-- Input Section to Type One Details and Add to List -->
       <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 22px;">
-        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; justify-content: space-between;">
+        <div class="staff-input-header" style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; justify-content: space-between;">
           <span style="display: flex; align-items: center; gap: 6px;">
             <svg style="width: 16px; height: 16px; color: var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -524,17 +542,17 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 14px; align-items: flex-end; margin-top: 4px;">
+        <div class="staff-input-action-row" style="display: flex; gap: 14px; align-items: flex-end; margin-top: 4px;">
           <div class="form-group" style="flex: 1; margin-bottom: 0;">
             <label for="wiz_staff_role">Preset Role</label>
-            <select id="wiz_staff_role">
+            <select id="wiz_staff_role" style="height: 42px;">
               <option value="front_desk">Front Desk (Check-in, Check-out, Folios)</option>
               <option value="housekeeping">Housekeeping (Room Turnovers, Maintenance)</option>
               <option value="accountant">Accountant (Billing, Payments, Invoices)</option>
               <option value="manager">Hotel Manager (Full Operational Access)</option>
             </select>
           </div>
-          <button type="button" class="btn btn-primary" id="btn-add-staff" onclick="addStaffFromInput()" style="height: 42px; padding: 0 22px; white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+          <button type="button" class="btn btn-primary" id="btn-add-staff" onclick="addStaffFromInput()" style="height: 42px; padding: 0 22px; white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
             <span>+ Add to Team</span>
           </button>
         </div>

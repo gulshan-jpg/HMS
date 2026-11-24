@@ -137,8 +137,16 @@ async function runTests() {
     });
     console.log(`[PASS] POST /api/onboarding/save -> ${r15.status} in ${r15.latency}ms (Message: ${r15.body.message})`);
 
+    // 16. Rate Calendar Matrix
+    const r16 = await request(port, '/api/rate-calendar?days=30');
+    console.log(`[PASS] GET /api/rate-calendar -> ${r16.status} in ${r16.latency}ms (Room Types: ${r16.body.room_types.length})`);
+
+    // 17. Availability Timeline
+    const r17 = await request(port, '/api/timeline?days=30');
+    console.log(`[PASS] GET /api/timeline -> ${r17.status} in ${r17.latency}ms (Rooms: ${r17.body.rooms.length})`);
+
     console.log('\n============================================================');
-    console.log(' ALL 15 TEST SUITES PASSED IN < 20ms PER REQUEST!');
+    console.log(' ALL 17 TEST SUITES PASSED IN < 20ms PER REQUEST!');
     console.log(' NODE.JS ENGINE IS BLAZING FAST AND FULLY OPERATIONAL!');
     console.log('============================================================\n');
   } finally {

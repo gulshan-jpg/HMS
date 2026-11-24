@@ -157,6 +157,18 @@ router.get('/rate-plans', (req, res) => {
   return res.json(store.getRatePlans());
 });
 
+router.get('/rate-calendar', (req, res) => {
+  const { start_date, days } = req.query;
+  const data = store.getRateCalendar(start_date, days);
+  return res.json(data);
+});
+
+router.get('/timeline', (req, res) => {
+  const { start_date, days } = req.query;
+  const data = store.getTimeline(start_date, days);
+  return res.json(data);
+});
+
 router.get('/rate-plans/quote', (req, res) => {
   const { check_in_date, check_out_date, adults, room_type_id } = req.query;
   const dIn = new Date(check_in_date || new Date());
