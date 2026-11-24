@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Mobile Drawer Sidebar Navigation Toggle
   const sidebarToggle = document.getElementById('mobile-sidebar-toggle');
+  const sidebarClose = document.getElementById('mobile-sidebar-close');
   const sidebar = document.getElementById('app-sidebar') || document.querySelector('.sidebar');
   const backdrop = document.getElementById('mobile-sidebar-backdrop');
 
@@ -149,6 +150,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         openMobileSidebar();
       }
     };
+  }
+  if (sidebarClose) {
+    sidebarClose.onclick = closeMobileSidebar;
   }
   if (backdrop) {
     backdrop.onclick = closeMobileSidebar;
