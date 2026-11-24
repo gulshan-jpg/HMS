@@ -35,19 +35,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Verify auth session and get user profile
-  let user = null;
-  try {
-    user = await API.me();
+  // Instant profile restore from localStorage for 0ms cold-start rendering
+  let user = API.getUser();
+  if (user) {
     window.currentUser = user;
-  } catch (e) {
-    API.setToken(null);
-    window.location.href = '/login';
-    return;
+    setupRoleInterface(user);
+    // Verify session asynchronously in background without blocking UI
+    API.me().then(freshUser => {
+      window.currentUser = freshUser;
+    }).catch(e => {
+      API.setToken(null);
+      window.location.href = '/login';
+    });
+  } else {
+    try {
+      user = await API.me();
+      window.currentUser = user;
+      setupRoleInterface(user);
+    } catch (e) {
+      API.setToken(null);
+      window.location.href = '/login';
+      return;
+    }
   }
-
-  // Configure role-tailored interface (Admin vs Staff)
-  setupRoleInterface(user);
 
   // Register SPA routes
   Router.register('/', (container) => window.Pages.Dashboard.render(container));

@@ -25,12 +25,19 @@ if os.environ.get("VERCEL") and db_url.startswith("sqlite:///."):
 
 if db_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False, "timeout": 30}
+else:
+    connect_args = {"connect_timeout": 8}
+
+is_pooler = "pooler" in db_url or ":6543" in db_url
 
 try:
     engine = create_engine(
         db_url,
         connect_args=connect_args,
-        pool_pre_ping=True,
+        pool_pre_ping=not is_pooler,
+        pool_size=10,
+        max_overflow=5,
+        pool_recycle=300,
         echo=False,
     )
 except Exception as e:

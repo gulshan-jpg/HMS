@@ -58,23 +58,24 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning(f"Production hardening check: {exc}")
 
-    # Create tables if they do not exist
-    try:
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database schemas verified.")
-    except Exception as exc:
-        logger.error(f"Database schema verification: {exc}")
+    # Ensure tables only on local development / SQLite, avoiding remote schema inspection on serverless cold starts
+    if settings.ENV not in ("production", "prod", "preview") and not os.environ.get("VERCEL"):
+        try:
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database schemas verified.")
+        except Exception as exc:
+            logger.error(f"Database schema verification: {exc}")
 
-    # Auto-seed initial demo data if database is fresh
-    try:
-        from app.models import User
-        with SessionLocal() as db:
-            if db.query(User).count() == 0:
-                logger.info("Fresh database detected. Auto-seeding initial hotel data...")
-                from seed import seed
-                seed()
-    except Exception as e:
-        logger.warning(f"Auto-seed check: {e}")
+        # Auto-seed initial demo data if database is fresh
+        try:
+            from app.models import User
+            with SessionLocal() as db:
+                if db.query(User).count() == 0:
+                    logger.info("Fresh database detected. Auto-seeding initial hotel data...")
+                    from seed import seed
+                    seed()
+        except Exception as e:
+            logger.warning(f"Auto-seed check: {e}")
 
     yield
     logger.info("Hotel PMS shutting down.")

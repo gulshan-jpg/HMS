@@ -5,7 +5,15 @@
 
 const API_BASE = '';
 
+// High-speed in-memory client cache with Stale-While-Revalidate (SWR)
+const _apiCache = new Map();
+const CACHE_TTL_MS = 30000; // 30 seconds
+
 const API = {
+  clearCache() {
+    _apiCache.clear();
+  },
+
   getToken() {
     return localStorage.getItem('access_token');
   },
@@ -115,7 +123,7 @@ const API = {
     }
   },
 
-  get(endpoint, params = {}) {
+  get(endpoint, params = {}, forceFresh = false) {
     const query = new URLSearchParams();
     for (const [k, v] of Object.entries(params)) {
       if (v !== null && v !== undefined && v !== '') {
@@ -123,10 +131,29 @@ const API = {
       }
     }
     const qs = query.toString();
-    return this.request(qs ? `${endpoint}?${qs}` : endpoint, { method: 'GET' });
+    const fullUrl = qs ? `${endpoint}?${qs}` : endpoint;
+    const now = Date.now();
+
+    // Check SWR memory cache
+    if (!forceFresh && _apiCache.has(fullUrl)) {
+      const entry = _apiCache.get(fullUrl);
+      if (now - entry.timestamp < CACHE_TTL_MS) {
+        // Return cached instantly (0ms) and refresh silently in background
+        this.request(fullUrl, { method: 'GET' }).then(freshData => {
+          _apiCache.set(fullUrl, { data: freshData, timestamp: Date.now() });
+        }).catch(() => {});
+        return Promise.resolve(JSON.parse(JSON.stringify(entry.data)));
+      }
+    }
+
+    return this.request(fullUrl, { method: 'GET' }).then(data => {
+      _apiCache.set(fullUrl, { data, timestamp: Date.now() });
+      return data;
+    });
   },
 
   post(endpoint, body = {}) {
+    _apiCache.clear();
     return this.request(endpoint, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -134,6 +161,7 @@ const API = {
   },
 
   patch(endpoint, body = {}) {
+    _apiCache.clear();
     return this.request(endpoint, {
       method: 'PATCH',
       body: JSON.stringify(body),
@@ -141,6 +169,7 @@ const API = {
   },
 
   put(endpoint, body = {}) {
+    _apiCache.clear();
     return this.request(endpoint, {
       method: 'PUT',
       body: JSON.stringify(body),
@@ -148,6 +177,7 @@ const API = {
   },
 
   delete(endpoint) {
+    _apiCache.clear();
     return this.request(endpoint, { method: 'DELETE' });
   },
 

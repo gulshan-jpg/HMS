@@ -44,16 +44,33 @@ window.Pages.Dashboard = {
       newGuestBtn.onclick = () => window.openDirectGuestCheckinModal();
     }
 
-    // Initial skeleton
-    container.innerHTML = `
-      <div class="kpi-row-grid">
-        ${UI.skeletonCards(4)}
-      </div>
-      <div class="dash-two-col-grid" style="margin-top: 16px;">
-        <div class="card" style="height: 290px;"><div class="skeleton" style="width:100%; height:100%;"></div></div>
-        <div class="card" style="height: 290px;"><div class="skeleton" style="width:100%; height:100%;"></div></div>
-      </div>
-    `;
+    // Instant optimistic render from sessionStorage if available
+    let hasRenderedOptimistic = false;
+    try {
+      const cachedStr = sessionStorage.getItem('hms_dashboard_cache');
+      if (cachedStr) {
+        const cachedData = JSON.parse(cachedStr);
+        if (isAdmin) {
+          this.renderAdminView(container, cachedData);
+        } else {
+          this.renderStaffView(container, cachedData);
+        }
+        hasRenderedOptimistic = true;
+      }
+    } catch (e) {}
+
+    // Show initial skeleton only if completely empty with no cache
+    if (!hasRenderedOptimistic) {
+      container.innerHTML = `
+        <div class="kpi-row-grid">
+          ${UI.skeletonCards(4)}
+        </div>
+        <div class="dash-two-col-grid" style="margin-top: 16px;">
+          <div class="card" style="height: 290px;"><div class="skeleton" style="width:100%; height:100%;"></div></div>
+          <div class="card" style="height: 290px;"><div class="skeleton" style="width:100%; height:100%;"></div></div>
+        </div>
+      `;
+    }
 
     await this.loadDashboardData(container);
   },
@@ -67,6 +84,9 @@ window.Pages.Dashboard = {
   async loadDashboardData(container) {
     try {
       const data = await API.get('/api/dashboard');
+      try {
+        sessionStorage.setItem('hms_dashboard_cache', JSON.stringify(data));
+      } catch (e) {}
       const isAdmin = window.currentUser && (window.currentUser.role === 'owner' || window.currentUser.role === 'admin' || window.currentUser.role === 'manager');
 
       if (isAdmin) {
@@ -75,7 +95,9 @@ window.Pages.Dashboard = {
         this.renderStaffView(container, data);
       }
     } catch (e) {
-      container.innerHTML = `<div style="padding: 24px; color: var(--danger); text-align: center;">Failed to load dashboard: ${e.message}</div>`;
+      if (!sessionStorage.getItem('hms_dashboard_cache')) {
+        container.innerHTML = `<div style="padding: 24px; color: var(--danger); text-align: center;">Failed to load dashboard: ${e.message}</div>`;
+      }
     }
   },
 
