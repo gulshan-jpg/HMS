@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Paused — CheckinOS PMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --accent: #111827;
+      --accent-hover: #1F2937;
+      --warning: #D97706;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+    .nav-bar { background: #000000; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; color: #FFFFFF; }
+    .nav-bar a { color: #FFFFFF; }
+    .container { max-width: 960px; margin: 48px auto; padding: 0 24px; text-align: center; }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      color: var(--warning);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 32px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+    p.lead { font-size: 16px; color: var(--text-secondary); max-width: 620px; margin: 0 auto 40px; }
+
+    .plans-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; text-align: left; }
+    .plan-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .plan-box.featured { border: 2px solid var(--accent); }
+    .plan-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .plan-price { font-size: 26px; font-weight: 700; font-family: var(--font-mono); margin: 12px 0; }
+    .plan-features { list-style: none; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+    .plan-features li { margin-bottom: 6px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      width: 100%;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
+    .btn-secondary:hover { background: var(--surface-alt); }
+
+    .data-guarantee {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 640px;
+      margin: 0 auto;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-bar">
+    <div style="font-weight: 700; font-size: 18px;">CheckinOS</div>
+    <div>
+      <button class="btn btn-secondary" style="width: auto; padding: 6px 14px;" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="status-badge">Trial Concluded / Subscription Required</div>
+    <h1>Your hotel trial has concluded</h1>
+    <p class="lead">Select a subscription plan to continue taking reservations, checking in guests, and processing folios. Your existing data is completely safe.</p>
+
+    <div class="plans-row">
+      <div class="plan-box">
+        <div>
+          <div class="plan-title">Starter</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Up to 15 rooms • 3 users</div>
+          <div class="plan-price">₹2,499<span style="font-size: 12px; font-weight: normal; color: var(--text-secondary);">/mo</span></div>
+          <ul class="plan-features">
+            <li>✓ Timeline room rack</li>
+            <li>✓ Mobile housekeeping</li>
+            <li>✓ GST tax invoices</li>
+          </ul>
+        </div>
+        <button class="btn btn-secondary" onclick="startCheckout('starter')">Select Starter</button>
+      </div>
+
+      <div class="plan-box featured">
+        <div>
+          <div style="font-size: 11px; text-transform: uppercase; font-family: var(--font-mono); color: var(--accent); font-weight: 700; margin-bottom: 2px;">Recommended</div>
+          <div class="plan-title">Pro</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Up to 50 rooms • 10 users</div>
+          <div class="plan-price">₹6,999<span style="font-size: 12px; font-weight: normal; color: var(--text-secondary);">/mo</span></div>
+          <ul class="plan-features">
+            <li>✓ Everything in Starter</li>
+            <li>✓ Dynamic rate plans</li>
+            <li>✓ Multi-folio split billing</li>
+            <li>✓ Night audit automation</li>
+          </ul>
+        </div>
+        <button class="btn btn-primary" onclick="startCheckout('pro')">Select Pro Plan</button>
+      </div>
+
+      <div class="plan-box">
+        <div>
+          <div class="plan-title">Enterprise</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Unlimited rooms & users</div>
+          <div class="plan-price">₹14,999<span style="font-size: 12px; font-weight: normal; color: var(--text-secondary);">/mo</span></div>
+          <ul class="plan-features">
+            <li>✓ Multi-property switcher</li>
+            <li>✓ Custom branded domain</li>
+            <li>✓ Dedicated account manager</li>
+          </ul>
+        </div>
+        <button class="btn btn-secondary" onclick="startCheckout('enterprise')">Select Enterprise</button>
+      </div>
+    </div>
+
+    <div class="data-guarantee">
+      <strong>Your Data Guarantee:</strong> All your guests, reservations, and financial folios are preserved. If you choose not to subscribe, you can download your entire property dataset via a single-click CSV export:
+      <div style="margin-top: 12px;">
+        <button class="btn btn-secondary" style="width: auto; padding: 8px 16px;" onclick="downloadDataExport()">Download Complete ZIP Data Export</button>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align: center; padding: 24px 16px 36px; font-size: 12px; color: var(--text-secondary); border-top: 1px solid var(--border); background: #FFFFFF; margin-top: auto;">
+    <p>&copy; 2026 CheckinOS PMS · Enterprise Billing Recovery · Developed by <strong style="color: var(--text); font-weight: 600;">Gulshan</strong></p>
+  </footer>
+
+  <script>
+    async function startCheckout(plan) {
+      const token = localStorage.getItem('access_token');
+      try {
+        const resp = await fetch('/api/billing/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            plan: plan,
+            billing_interval: 'month',
+            success_url: window.location.origin + '/app?upgraded=true',
+            cancel_url: window.location.origin + '/locked'
+          })
+        });
+        const data = await resp.json();
+        if (data.checkout_url) {
+          window.location.href = data.checkout_url;
+        } else {
+          alert("Billing initialization notice: " + (data.message || "Simulated subscription updated."));
+          window.location.href = '/app';
+        }
+      } catch (err) {
+        alert("Failed to initialize checkout. Please contact support.");
+      }
+    }
+
+    async function downloadDataExport() {
+      const token = localStorage.getItem('access_token');
+      try {
+        const resp = await fetch('/api/admin/export', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const blob = await resp.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `CheckinOS_DataExport_${new Date().toISOString().slice(0, 10)}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) {
+        alert("Export failed: " + e.message);
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>

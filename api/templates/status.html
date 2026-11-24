@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Status — CheckinOS PMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --success: #059669;
+      --success-bg: #ECFDF5;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 15px; line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    .nav-bar { background: #000000; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 16px 24px; color: #FFFFFF; }
+    .nav-inner { max-width: 860px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .nav-brand { font-weight: 700; font-size: 18px; color: #FFFFFF; }
+    .nav-brand a { color: #FFFFFF; }
+    .nav-inner a { color: #FFFFFF; }
+    .nav-inner a:hover { color: #FFFFFF; }
+    .content-wrap { max-width: 860px; margin: 48px auto; padding: 0 24px 80px; }
+    .overall-card {
+      background: var(--success-bg);
+      border: 1px solid #A7F3D0;
+      border-radius: 8px;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .status-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--success); }
+    .overall-title { font-size: 20px; font-weight: 700; color: #065F46; }
+    .overall-sub { font-size: 14px; color: #047857; }
+    .components-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 48px;
+    }
+    .comp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .comp-row:last-child { border-bottom: none; }
+    .comp-name { font-weight: 500; }
+    .comp-status { font-size: 13px; font-weight: 600; color: var(--success); display: flex; align-items: center; gap: 6px; }
+    .comp-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+    
+    /* Uptime Bar */
+    .uptime-section { margin-bottom: 48px; }
+    .uptime-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--text-secondary); }
+    .uptime-bar {
+      display: grid;
+      grid-template-columns: repeat(90, 1fr);
+      gap: 2px;
+      height: 32px;
+      background: #E5E7EB;
+      padding: 3px;
+      border-radius: 6px;
+    }
+    .day-tick { background: var(--success); border-radius: 2px; }
+    
+    /* Incident History */
+    h2 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+    .incident-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .incident-date { font-size: 13px; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 6px; }
+    .incident-title { font-weight: 600; margin-bottom: 6px; }
+    .incident-desc { font-size: 14px; color: #4B5563; }
+    footer { border-top: 1px solid var(--border); background: #fff; padding: 32px 24px; text-align: center; font-size: 13px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <div style="font-weight: 700;"><a href="/">CheckinOS</a></div>
+      <div><a href="/login" style="font-size: 14px; font-weight: 500;">Sign in</a></div>
+    </div>
+  </nav>
+
+  <main class="content-wrap">
+    <div class="overall-card">
+      <div class="status-dot"></div>
+      <div>
+        <div class="overall-title">All Systems Operational</div>
+        <div class="overall-sub">All core services running at peak performance. 99.98% uptime past 90 days.</div>
+      </div>
+    </div>
+
+    <div class="components-card">
+      <div class="comp-row">
+        <span class="comp-name">PMS Web Application & Dashboard</span>
+        <span class="comp-status">Operational</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Core API & Webhook Delivery</span>
+        <span class="comp-status">Operational</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Database & High-Availability Storage</span>
+        <span class="comp-status">Operational</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Transactional Email Gateway (SendGrid)</span>
+        <span class="comp-status">Operational</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Payment Gateway & Invoicing Engine (Stripe)</span>
+        <span class="comp-status">Operational</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Automated Cloud Backups</span>
+        <span class="comp-status">Operational</span>
+      </div>
+    </div>
+
+    <div class="uptime-section">
+      <div class="uptime-header">
+        <span>90 days ago</span>
+        <strong style="color: var(--text);">99.98% Uptime</strong>
+        <span>Today</span>
+      </div>
+      <div class="uptime-bar">
+        <!-- 90 green ticks -->
+        <script>
+          for (let i = 0; i < 90; i++) {
+            document.write('<div class="day-tick" title="100% operational"></div>');
+          }
+        </script>
+      </div>
+    </div>
+
+    <h2>Past Maintenance & Incidents</h2>
+    <div class="incident-item">
+      <div class="incident-date">November 12, 2026 • 02:00 – 02:04 UTC</div>
+      <div class="incident-title">Scheduled Maintenance: Database Schema Optimization</div>
+      <div class="incident-desc">Routine database migration completed in 4 minutes with zero packet drop or customer disruption. All services resumed normal operations immediately.</div>
+    </div>
+    <div class="incident-item">
+      <div class="incident-date">October 28, 2026 • 03:00 – 03:10 UTC</div>
+      <div class="incident-title">Scheduled Network Infrastructure Patch</div>
+      <div class="incident-desc">Security patches applied to edge reverse proxy routers. Redundant instances maintained active sessions with zero downtime.</div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 CheckinOS PMS. All systems monitored 24/7/365. · Developed by <strong>Gulshan</strong></p>
+  </footer>
+</body>
+</html>

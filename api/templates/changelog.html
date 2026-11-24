@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Changelog — CheckinOS PMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --success: #059669;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 15px; line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    .nav-bar { background: #000000; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 16px 24px; color: #FFFFFF; }
+    .nav-inner { max-width: 860px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .nav-brand { font-weight: 700; font-size: 18px; color: #FFFFFF; }
+    .nav-brand a { color: #FFFFFF; }
+    .nav-inner a { color: #FFFFFF; }
+    .nav-inner a:hover { color: #FFFFFF; }
+    .content-wrap { max-width: 860px; margin: 48px auto; padding: 0 24px 80px; }
+    h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    p.lead { font-size: 16px; color: var(--text-secondary); margin-bottom: 40px; }
+    .release-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .release-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+    .version-tag { font-family: var(--font-mono); font-size: 16px; font-weight: 700; }
+    .release-date { font-size: 13px; color: var(--text-secondary); }
+    .release-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+    .badge-new { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+    .badge-imp { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+    .badge-sec { background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; }
+    ul { list-style: none; margin: 12px 0; }
+    li { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; font-size: 14px; }
+    footer { border-top: 1px solid var(--border); background: #fff; padding: 32px 24px; text-align: center; font-size: 13px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <div style="font-weight: 700;"><a href="/">CheckinOS</a></div>
+      <div><a href="/login" style="font-size: 14px; font-weight: 500;">Sign in</a></div>
+    </div>
+  </nav>
+
+  <main class="content-wrap">
+    <h1>Product Changelog</h1>
+    <p class="lead">New features, performance upgrades, and security improvements shipped to CheckinOS.</p>
+
+    <!-- v1.0.0 -->
+    <div class="release-card">
+      <div class="release-header">
+        <span class="version-tag">v1.0.0</span>
+        <span class="release-date">November 24, 2026</span>
+      </div>
+      <div class="release-title">Commercial B2B SaaS Launch</div>
+      <p style="color: #4B5563; margin-bottom: 16px;">The official production release enabling multi-tenancy, self-serve onboarding, billing, and enterprise hospitality data safety.</p>
+      <ul>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Multi-Tenant Architecture:</strong> Complete row-level isolation per hotel organization with custom subdomains and branding logo uploads.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Self-Serve Onboarding & 14-Day Trial:</strong> Instant signup with auto-seeded realistic boutique hotel demo data and a 7-step onboarding wizard.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Stripe Subscription Engine:</strong> Tiered plans (Starter, Pro, Enterprise) with Stripe Checkout, customer billing portal, and plan limit enforcement.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Mobile Housekeeping Views:</strong> Cleaning staff can access floor-grouped rooms via secure 24-hour links without logins.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>CSV Bulk Import Wizard:</strong> Pre-validated bulk import for guest lists and room inventories with downloadable templates.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>ReportLab PDF Invoices:</strong> Sequential fiscal tax invoicing with CGST/SGST/IGST breakdowns and print-ready A4 formatting.</span>
+        </li>
+        <li>
+          <span class="badge badge-sec">Security</span>
+          <span><strong>Audit Log Engine & Optimistic Locking:</strong> Before/after state diff tracking for all entity changes, plus version-based concurrent booking collision detection.</span>
+        </li>
+        <li>
+          <span class="badge badge-imp">Improved</span>
+          <span><strong>One-Click Data Safety:</strong> Automated encrypted backups, trash bin with soft-delete restores, and single-click full ZIP CSV data export.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- v0.9.0 -->
+    <div class="release-card">
+      <div class="release-header">
+        <span class="version-tag">v0.9.0</span>
+        <span class="release-date">November 10, 2026</span>
+      </div>
+      <div class="release-title">Tier-1 Core Hospitality Engine</div>
+      <p style="color: #4B5563; margin-bottom: 16px;">Foundational PMS features designed to match commercial hospitality standards.</p>
+      <ul>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Availability Timeline (Gantt):</strong> Visual room rack with conflict detection and drag-and-drop reservations.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Split Folios & Group Bookings:</strong> Multi-folio billing, room charges, corporate allocations, and master room routing.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Dynamic Rate Plans:</strong> Flexible, non-refundable, and length-of-stay discount rules with automated cancellation policy calculations.</span>
+        </li>
+        <li>
+          <span class="badge badge-new">New</span>
+          <span><strong>Automated Night Audit:</strong> Business date rollover, daily snapshot balance checks, and manager closing logs.</span>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 CheckinOS PMS. All rights reserved. · Developed by <strong>Gulshan</strong></p>
+  </footer>
+</body>
+</html>

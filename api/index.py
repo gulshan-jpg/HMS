@@ -2,12 +2,12 @@ import sys
 import os
 from pathlib import Path
 
-# Ensure root directory is on Python path
+# Add project root and /var/task to sys.path
 root_dir = Path(__file__).resolve().parent.parent
-if str(root_dir) not in sys.path:
-    sys.path.insert(0, str(root_dir))
+for p in [str(root_dir), "/var/task", os.getcwd()]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 from app.main import app
 
-# Export handler for Vercel
 app = app

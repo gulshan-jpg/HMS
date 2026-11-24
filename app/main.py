@@ -258,26 +258,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Search for templates in local dev and Vercel Lambda bundle (/var/task)
 possible_template_dirs = [
-    BASE_DIR / "templates",
-    Path.cwd() / "templates",
-    Path("/var/task/templates"),
+    str(BASE_DIR / "templates"),
+    str(BASE_DIR / "api" / "templates"),
+    str(Path.cwd() / "templates"),
+    str(Path.cwd() / "api" / "templates"),
+    "/var/task/templates",
+    "/var/task/api/templates",
+    "/var/task/app/templates",
 ]
-templates_dir = next((d for d in possible_template_dirs if d.exists()), BASE_DIR / "templates")
+existing_template_dirs = [d for d in possible_template_dirs if os.path.isdir(d)]
+if not existing_template_dirs:
+    existing_template_dirs = [str(BASE_DIR / "templates")]
 
 possible_static_dirs = [
-    BASE_DIR / "static",
-    Path.cwd() / "static",
-    Path("/var/task/static"),
+    str(BASE_DIR / "static"),
+    str(BASE_DIR / "api" / "static"),
+    str(Path.cwd() / "static"),
+    str(Path.cwd() / "api" / "static"),
+    "/var/task/static",
+    "/var/task/api/static",
+    "/var/task/app/static",
 ]
-static_dir = next((d for d in possible_static_dirs if d.exists()), BASE_DIR / "static")
+existing_static_dir = next((d for d in possible_static_dirs if os.path.isdir(d)), str(BASE_DIR / "static"))
 
-if not static_dir.exists():
-    static_dir.mkdir(parents=True, exist_ok=True)
-if not templates_dir.exists():
-    templates_dir.mkdir(parents=True, exist_ok=True)
-
-app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
-templates = Jinja2Templates(directory=str(templates_dir))
+app.mount("/static", StaticFiles(directory=existing_static_dir), name="static")
+templates = Jinja2Templates(directory=existing_template_dirs)
 
 
 # ── Public Marketing & Trust Pages ──────────────────────────────────────────

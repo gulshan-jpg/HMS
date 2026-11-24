@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Housekeeping Mobile — CheckinOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --accent: #111827;
+      --success: #059669;
+      --success-bg: #ECFDF5;
+      --warning: #D97706;
+      --warning-bg: #FFFBEB;
+      --danger: #DC2626;
+      --danger-bg: #FEF2F2;
+      --info: #2563EB;
+      --info-bg: #EFF6FF;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.4;
+      padding-bottom: 60px;
+    }
+
+    /* Mobile Header */
+    .mobile-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      z-index: 40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-hotel { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+    .header-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: var(--text-secondary);
+    }
+
+    /* KPI Summary */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .kpi-item {
+      text-align: center;
+      padding: 8px 4px;
+      background: var(--surface-alt);
+      border-radius: 6px;
+    }
+    .kpi-num { font-size: 20px; font-weight: 700; font-family: var(--font-mono); }
+    .kpi-lbl { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; }
+
+    /* Floor Filter Tabs */
+    .floor-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: var(--bg);
+    }
+    .floor-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Room Cards Container */
+    .room-list {
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .room-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .room-card.dirty { border-left: 5px solid var(--warning); }
+    .room-card.cleaning { border-left: 5px solid var(--info); }
+    .room-card.clean, .room-card.available { border-left: 5px solid var(--success); }
+    .room-card.maintenance { border-left: 5px solid var(--danger); }
+
+    .room-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .room-num {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .room-type {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .badge-status {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-family: var(--font-mono);
+    }
+    .st-dirty { background: var(--warning-bg); color: var(--warning); border: 1px solid #FDE68A; }
+    .st-cleaning { background: var(--info-bg); color: var(--info); border: 1px solid #BFDBFE; }
+    .st-clean, .st-available { background: var(--success-bg); color: var(--success); border: 1px solid #A7F3D0; }
+    .st-occupied { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+    .st-maintenance { background: var(--danger-bg); color: var(--danger); border: 1px solid #FECACA; }
+
+    .room-notes {
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: var(--surface-alt);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 10px 0 14px;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn-act {
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-clean { background: var(--success); color: #fff; }
+    .btn-cleaning { background: var(--info); color: #fff; }
+    .btn-issue { background: var(--surface-alt); border-color: var(--border); color: var(--text); }
+
+    /* Modal / Drawer */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: flex-end;
+      z-index: 50;
+    }
+    .modal-sheet {
+      background: #FFFFFF;
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      padding: 24px 20px 32px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+      z-index: 60;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="mobile-header">
+    <div>
+      <div class="header-hotel" id="hotel-name">Housekeeping View</div>
+      <div style="font-size: 11px; color: var(--text-secondary);">Real-time Staff Link</div>
+    </div>
+    <span class="header-badge" id="sync-pill">Connected</span>
+  </header>
+
+  <div class="kpi-row">
+    <div class="kpi-item">
+      <div class="kpi-num" id="kpi-total">0</div>
+      <div class="kpi-lbl">Total Rooms</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num" id="kpi-dirty" style="color: var(--warning);">0</div>
+      <div class="kpi-lbl">Dirty / Pending</div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-num" id="kpi-clean" style="color: var(--success);">0</div>
+      <div class="kpi-lbl">Clean / Ready</div>
+    </div>
+  </div>
+
+  <div class="floor-tabs" id="floor-tabs">
+    <button class="tab-btn active" onclick="filterFloor('all')">All Floors</button>
+  </div>
+
+  <div class="room-list" id="room-list">
+    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">Loading room turnover assignments...</div>
+  </div>
+
+  <footer style="text-align: center; padding: 24px 16px 36px; font-size: 11px; color: var(--text-secondary);">
+    <div>CheckinOS Mobile Housekeeping · Real-time Staff Link</div>
+    <div style="margin-top: 4px;">Developed by <strong style="color: var(--text); font-weight: 600;">Gulshan</strong></div>
+  </footer>
+
+  <!-- Issue Reporting Modal Sheet -->
+  <div class="modal-overlay" id="issue-modal">
+    <div class="modal-sheet">
+      <div class="modal-title" id="issue-modal-title">Report Issue for Room</div>
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Priority</label>
+        <select id="issue-priority" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 14px;">
+          <option value="medium" selected>Medium — Standard Maintenance</option>
+          <option value="high">High — Needs Fix Before Arrival</option>
+          <option value="urgent">Urgent — Out of Order</option>
+          <option value="low">Low — Minor Cosmetic</option>
+        </select>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Issue Description</label>
+        <textarea id="issue-notes" rows="3" placeholder="e.g. Bathroom light flickering, AC remote missing battery..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-family: var(--font-sans); font-size: 14px;"></textarea>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn-act btn-issue" onclick="closeIssueModal()">Cancel</button>
+        <button class="btn-act btn-clean" style="background: var(--accent);" onclick="submitIssue()">Submit Report</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Room updated</div>
+
+  <script>
+    const TOKEN = "{{ token }}";
+    let allRooms = [];
+    let currentFilter = 'all';
+    let activeReportingRoomId = null;
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2200);
+    }
+
+    async function fetchHousekeepingData() {
+      try {
+        const resp = await fetch(`/api/housekeeping/token/${TOKEN}`);
+        if (!resp.ok) {
+          document.getElementById('room-list').innerHTML = `
+            <div style="text-align: center; padding: 48px 24px; color: var(--danger);">
+              <h3 style="margin-bottom: 8px;">Link Expired or Invalid</h3>
+              <p style="font-size: 14px; color: var(--text-secondary);">This mobile housekeeping link has expired. Please ask your hotel manager to generate a new share link.</p>
+            </div>
+          `;
+          document.getElementById('sync-pill').innerText = 'Expired';
+          document.getElementById('sync-pill').style.color = 'var(--danger)';
+          return;
+        }
+
+        const data = await resp.json();
+        document.getElementById('hotel-name').innerText = data.org.name;
+        document.getElementById('kpi-total').innerText = data.total_rooms;
+        document.getElementById('kpi-dirty').innerText = data.dirty_count;
+        document.getElementById('kpi-clean').innerText = data.clean_count;
+
+        // Flatten rooms list
+        allRooms = [];
+        const floorTabs = document.getElementById('floor-tabs');
+        const floors = data.floors || [];
+        
+        // Build floor tabs
+        let tabHtml = `<button class="tab-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="filterFloor('all')">All Floors</button>`;
+        floors.forEach(f => {
+          tabHtml += `<button class="tab-btn ${currentFilter == f.floor ? 'active' : ''}" onclick="filterFloor('${f.floor}')">Floor ${f.floor}</button>`;
+          f.rooms.forEach(rm => allRooms.push(rm));
+        });
+        floorTabs.innerHTML = tabHtml;
+
+        renderRooms();
+      } catch (err) {
+        console.error("Housekeeping fetch error:", err);
+      }
+    }
+
+    function filterFloor(floor) {
+      currentFilter = floor;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderRooms();
+    }
+
+    function renderRooms() {
+      const filtered = currentFilter === 'all' 
+        ? allRooms 
+        : allRooms.filter(r => r.floor == currentFilter);
+
+      const container = document.getElementById('room-list');
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 32px; color: var(--text-secondary);">No rooms on this floor.</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(r => {
+        const isDirty = ['dirty', 'cleaning'].includes(r.status);
+        const statusClass = `st-${r.status}`;
+        const activeTask = r.active_task ? r.active_task.notes : null;
+
+        return `
+          <div class="room-card ${r.status}">
+            <div class="room-header">
+              <div>
+                <div class="room-num">${r.number}</div>
+                <div class="room-type">Floor ${r.floor} • ${r.room_type}</div>
+              </div>
+              <span class="badge-status ${statusClass}">${r.status}</span>
+            </div>
+
+            ${activeTask ? `<div class="room-notes"><strong>Order:</strong> ${activeTask}</div>` : ''}
+            ${r.notes && !activeTask ? `<div class="room-notes">${r.notes}</div>` : ''}
+
+            <div class="actions-grid">
+              ${r.status !== 'available' && r.status !== 'clean' ? `
+                <button class="btn-act btn-clean" onclick="updateStatus(${r.id}, 'available')">Mark Clean</button>
+              ` : `
+                <button class="btn-act btn-cleaning" style="background: var(--surface-alt); color: var(--text); border: 1px solid var(--border);" onclick="updateStatus(${r.id}, 'dirty')">Mark Dirty</button>
+              `}
+              <button class="btn-act btn-issue" onclick="openIssueModal(${r.id}, '${r.number}')">Report Issue</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function updateStatus(roomId, newStatus) {
+      try {
+        const resp = await fetch(`/api/housekeeping/token/${TOKEN}/room/${roomId}/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (resp.ok) {
+          showToast(`Room marked ${newStatus}`);
+          fetchHousekeepingData();
+        }
+      } catch (e) {
+        showToast("Update failed. Please retry.");
+      }
+    }
+
+    function openIssueModal(roomId, roomNum) {
+      activeReportingRoomId = roomId;
+      document.getElementById('issue-modal-title').innerText = `Report Maintenance for Room ${roomNum}`;
+      document.getElementById('issue-notes').value = '';
+      document.getElementById('issue-modal').style.display = 'flex';
+    }
+
+    function closeIssueModal() {
+      document.getElementById('issue-modal').style.display = 'none';
+      activeReportingRoomId = null;
+    }
+
+    async function submitIssue() {
+      const notes = document.getElementById('issue-notes').value.trim();
+      const priority = document.getElementById('issue-priority').value;
+      if (!notes) {
+        alert("Please describe the issue.");
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/housekeeping/token/${TOKEN}/room/${activeReportingRoomId}/maintenance`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ notes, priority })
+        });
+        if (resp.ok) {
+          closeIssueModal();
+          showToast("Maintenance reported");
+          fetchHousekeepingData();
+        }
+      } catch (e) {
+        alert("Failed to submit issue. Please check network.");
+      }
+    }
+
+    // Initial load + 15s polling
+    fetchHousekeepingData();
+    setInterval(fetchHousekeepingData, 15000);
+  </script>
+</body>
+</html>

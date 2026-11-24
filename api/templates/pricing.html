@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing & Plans — CheckinOS PMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --border-strong: #D1D5DB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --accent: #111827;
+      --accent-hover: #1F2937;
+      --success: #059669;
+      --success-bg: #ECFDF5;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Header Nav (Black with white words) */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      background: #000000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      z-index: 50;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #FFFFFF;
+    }
+    .nav-brand a { color: #FFFFFF; }
+    .brand-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #E5E7EB;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+    .nav-links a { color: #FFFFFF; transition: opacity 0.15s ease; }
+    .nav-links a:hover { opacity: 0.8; color: #FFFFFF; }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-actions .btn-secondary {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+    }
+    .nav-actions .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #FFFFFF;
+    }
+    .nav-actions .btn-primary {
+      background: #FFFFFF;
+      color: #000000;
+      font-weight: 600;
+      border-color: #FFFFFF;
+    }
+    .nav-actions .btn-primary:hover {
+      background: #F3F4F6;
+      color: #000000;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
+    .btn-secondary:hover { background: var(--surface-alt); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-full { width: 100%; padding: 10px; font-weight: 600; }
+
+    .page-header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 32px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .page-header p {
+      font-size: 17px;
+      color: var(--text-secondary);
+    }
+
+    /* Billing Toggle */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 32px 0 48px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .toggle-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 6px;
+      display: flex;
+      gap: 4px;
+    }
+    .toggle-opt {
+      padding: 6px 16px;
+      border-radius: 16px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .toggle-opt.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .badge-discount {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--success);
+      background: var(--success-bg);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #A7F3D0;
+    }
+
+    /* Plans Grid */
+    .plans-grid {
+      max-width: 1140px;
+      margin: 0 auto 64px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .plan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .plan-card.featured {
+      border: 2px solid var(--accent);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .popular-pill {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 12px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .plan-name { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .plan-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; min-height: 40px; }
+    .plan-price { margin-bottom: 24px; }
+    .price-num { font-size: 38px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.02em; }
+    .price-period { font-size: 14px; color: var(--text-secondary); }
+    .plan-features {
+      list-style: none;
+      margin-bottom: 32px;
+      flex: 1;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .plan-features svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--success);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* Comparison Table */
+    .table-section {
+      max-width: 1140px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .table-section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .compare-table {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .compare-table th, .compare-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .compare-table th {
+      background: var(--surface-alt);
+      font-weight: 600;
+    }
+    .compare-table td.center, .compare-table th.center {
+      text-align: center;
+    }
+    .category-row {
+      background: #FAFAFA;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      max-width: 860px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .faq-section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .faq-q { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .faq-a { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 48px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a href="/">CheckinOS</a>
+        <span class="brand-badge">PMS</span>
+      </div>
+      <div class="nav-links">
+        <a href="/#features">Features</a>
+        <a href="/pricing" style="color: #FFFFFF; font-weight: 600;">Pricing</a>
+        <a href="/security">Security</a>
+        <a href="/status">Status</a>
+        <a href="/changelog">Changelog</a>
+      </div>
+      <div class="nav-actions">
+        <a href="/login" class="btn btn-secondary" style="margin-right: 8px;">Sign in</a>
+        <a href="/signup" class="btn btn-primary">Start free trial</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>Simple, transparent pricing for hotels of all sizes</h1>
+    <p>All plans include full feature access during your 14-day free trial. No setup fees, no contracts, cancel anytime.</p>
+
+    <div class="toggle-wrap">
+      <div class="toggle-btn">
+        <span class="toggle-opt active" onclick="setBilling('monthly')">Monthly Billing</span>
+        <span class="toggle-opt" onclick="setBilling('annual')">Annual Billing</span>
+      </div>
+      <span class="badge-discount">Save 17% (2 Months Free)</span>
+    </div>
+  </header>
+
+  <!-- Plans Grid -->
+  <div class="plans-grid">
+    <!-- Starter -->
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-desc">For small boutique stays, guest houses, and homestays up to 15 rooms.</div>
+      <div class="plan-price">
+        <span class="price-num" id="starter-price">₹2,499</span>
+        <span class="price-period">/ month</span>
+      </div>
+      <a href="/signup?plan=starter" class="btn btn-secondary btn-full">Start 14-day trial</a>
+      <ul class="plan-features">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Up to 15 rooms
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          3 staff accounts
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Front Desk check-in & check-out
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Room availability timeline
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Mobile housekeeping links
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          GST tax invoices & PDF export
+        </li>
+      </ul>
+    </div>
+
+    <!-- Pro -->
+    <div class="plan-card featured">
+      <div class="popular-pill">Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-desc">For established independent hotels, resorts, and mid-sized properties.</div>
+      <div class="plan-price">
+        <span class="price-num" id="pro-price">₹6,999</span>
+        <span class="price-period">/ month</span>
+      </div>
+      <a href="/signup?plan=pro" class="btn btn-primary btn-full">Start 14-day trial</a>
+      <ul class="plan-features">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Up to 50 rooms
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          10 staff accounts (with role presets)
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Everything in Starter
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Dynamic rate plans & length-of-stay discounts
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Multi-folio corporate split billing
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Automated night audit with report archiving
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Hourly automated cloud backups
+        </li>
+      </ul>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-desc">For hotel groups, heritage estates, and properties with custom operations.</div>
+      <div class="plan-price">
+        <span class="price-num" id="enterprise-price">₹14,999</span>
+        <span class="price-period">/ month</span>
+      </div>
+      <a href="/signup?plan=enterprise" class="btn btn-secondary btn-full">Start 14-day trial</a>
+      <ul class="plan-features">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Unlimited rooms
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Unlimited staff accounts
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Multi-property portfolio switcher
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Custom domain ({hotel}.yourdomain.com)
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Detailed tamper-evident audit trails
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          99.99% Uptime SLA & Dedicated Account Manager
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <section class="table-section">
+    <h2>Detailed Feature Comparison</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th class="center" style="width: 20%;">Starter</th>
+          <th class="center" style="width: 20%;">Pro</th>
+          <th class="center" style="width: 20%;">Enterprise</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="category-row"><td colspan="4">Capacity & Users</td></tr>
+        <tr>
+          <td>Room Inventory Limit</td>
+          <td class="center font-mono">15 rooms</td>
+          <td class="center font-mono">50 rooms</td>
+          <td class="center font-mono">Unlimited</td>
+        </tr>
+        <tr>
+          <td>User Accounts</td>
+          <td class="center font-mono">3 staff</td>
+          <td class="center font-mono">10 staff</td>
+          <td class="center font-mono">Unlimited</td>
+        </tr>
+        <tr>
+          <td>Role Presets (Front Desk, Housekeeping, etc.)</td>
+          <td class="center">Basic</td>
+          <td class="center">5 Presets</td>
+          <td class="center">Custom RBAC</td>
+        </tr>
+
+        <tr class="category-row"><td colspan="4">Front Desk & Reservations</td></tr>
+        <tr>
+          <td>Room Availability Gantt Timeline</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+        </tr>
+        <tr>
+          <td>Rate Plans & LOS Discounts</td>
+          <td class="center">Base Rates</td>
+          <td class="center">Full Dynamic</td>
+          <td class="center">Full Dynamic</td>
+        </tr>
+        <tr>
+          <td>Group Booking Block Allocations</td>
+          <td class="center">—</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+        </tr>
+
+        <tr class="category-row"><td colspan="4">Financials & Data Safety</td></tr>
+        <tr>
+          <td>Sequential GST Tax Invoices (PDF)</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+        </tr>
+        <tr>
+          <td>Automated Night Audit</td>
+          <td class="center">Manual</td>
+          <td class="center">Automated</td>
+          <td class="center">Automated</td>
+        </tr>
+        <tr>
+          <td>One-Click CSV Data Export</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+          <td class="center">Included</td>
+        </tr>
+        <tr>
+          <td>Audit Trail Log Retention</td>
+          <td class="center">7 days</td>
+          <td class="center">90 days</td>
+          <td class="center">Unlimited</td>
+        </tr>
+        <tr>
+          <td>Cloud Backups</td>
+          <td class="center">Daily</td>
+          <td class="center">Hourly</td>
+          <td class="center">Continuous</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">What happens after my 14-day free trial ends?</div>
+      <div class="faq-a">Your data remains completely safe. At the end of the trial, you will be prompted to pick a subscription plan to continue taking reservations and generating invoices. If you decide not to continue, you can download all your guests, rooms, and financial logs via a single-click ZIP export at any time.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Can we import our existing guests and rooms from our old PMS?</div>
+      <div class="faq-a">Yes. CheckinOS includes a built-in CSV bulk import wizard with pre-validation. Download our sample CSV templates for guests and rooms, paste your data, and import hundreds of rows in under 10 seconds.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Do we need specialized hardware or local servers?</div>
+      <div class="faq-a">No hardware required whatsoever. CheckinOS is 100% cloud-native and works inside any modern browser on PC, Mac, iPad, Android tablets, or mobile phones. Front desk computers require only a modern web browser.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is CheckinOS compliant with Indian GST requirements?</div>
+      <div class="faq-a">Yes. Our invoice engine automatically handles CGST, SGST, and IGST breakdowns according to Indian tax regulations. Invoices include GSTIN, SAC codes, and sequential fiscal year numbering.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What if our internet connection drops at the front desk?</div>
+      <div class="faq-a">CheckinOS includes an offline-tolerant service worker that caches the current room rack, arrival list, and checked-in guest folios. Front desk staff can continue looking up room assignments and guest details even during temporary network interruptions.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">How does the mobile housekeeping view work?</div>
+      <div class="faq-a">Managers can generate a secure 24-hour signed link from the dashboard and share it via WhatsApp or SMS to cleaning staff. Housekeeping opens the link without needing an email or password, sees their floor's rooms, and marks rooms clean with one tap.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What payment methods do you accept for subscriptions?</div>
+      <div class="faq-a">We process subscriptions securely through Stripe. We accept all major credit cards, debit cards, UPI, and net banking. Tax invoices with your hotel's GST number are automatically emailed upon renewal.</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 CheckinOS PMS. All rights reserved. · Developed by <strong>Gulshan</strong> · <a href="/legal/terms" style="text-decoration: underline;">Terms</a> • <a href="/legal/privacy" style="text-decoration: underline;">Privacy</a> • <a href="/security" style="text-decoration: underline;">Security</a></p>
+  </footer>
+
+  <script>
+    function setBilling(mode) {
+      const opts = document.querySelectorAll('.toggle-opt');
+      opts.forEach(el => el.classList.remove('active'));
+      if (mode === 'monthly') {
+        opts[0].classList.add('active');
+        document.getElementById('starter-price').innerText = '₹2,499';
+        document.getElementById('pro-price').innerText = '₹6,999';
+        document.getElementById('enterprise-price').innerText = '₹14,999';
+      } else {
+        opts[1].classList.add('active');
+        document.getElementById('starter-price').innerText = '₹2,080';
+        document.getElementById('pro-price').innerText = '₹5,830';
+        document.getElementById('enterprise-price').innerText = '₹12,500';
+      }
+    }
+  </script>
+</body>
+</html>
