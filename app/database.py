@@ -1,4 +1,5 @@
 """Database connection, session factory, tenant isolation, and soft delete hooks."""
+import os
 from contextvars import ContextVar
 from typing import Optional, List
 from sqlalchemy import create_engine, event
@@ -7,17 +8,21 @@ from app.config import settings
 
 # Engine configuration depending on dialect
 connect_args = {}
-if settings.DATABASE_URL.startswith("sqlite"):
+db_url = settings.DATABASE_URL
+if os.environ.get("VERCEL") and db_url.startswith("sqlite:///."):
+    db_url = "sqlite:////tmp/hotel_pms.db"
+
+if db_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False, "timeout": 30}
 
 engine = create_engine(
-    settings.DATABASE_URL,
+    db_url,
     connect_args=connect_args,
     pool_pre_ping=True,
     echo=False,
 )
 
-if settings.DATABASE_URL.startswith("sqlite"):
+if db_url.startswith("sqlite"):
     @event.listens_for(engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()

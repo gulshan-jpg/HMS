@@ -58,6 +58,18 @@ async def lifespan(app: FastAPI):
     # Create tables if they do not exist
     Base.metadata.create_all(bind=engine)
     logger.info("Database schemas verified.")
+
+    # Auto-seed initial demo data if database is fresh
+    try:
+        from app.models import User
+        with SessionLocal() as db:
+            if db.query(User).count() == 0:
+                logger.info("Fresh database detected. Auto-seeding initial hotel data...")
+                from seed import seed
+                seed()
+    except Exception as e:
+        logger.warning(f"Auto-seed check: {e}")
+
     yield
     logger.info("Hotel PMS shutting down.")
 
