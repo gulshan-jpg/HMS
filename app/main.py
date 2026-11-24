@@ -364,6 +364,16 @@ def serve_changelog(request: Request):
 
 # ── Auth & Onboarding Flow Pages ────────────────────────────────────────────
 
+@app.get("/demo", response_class=HTMLResponse)
+@app.get("/request-demo", response_class=HTMLResponse)
+def serve_demo(request: Request):
+    """Render Request a Demo booking page."""
+    return templates.TemplateResponse(
+        "demo.html",
+        {"request": request, "hotel_name": settings.HOTEL_NAME},
+    )
+
+
 @app.get("/signup", response_class=HTMLResponse)
 def serve_signup(request: Request):
     """Render self-serve signup page."""

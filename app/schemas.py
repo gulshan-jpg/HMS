@@ -1251,6 +1251,30 @@ class OnboardingSaveRequest(BaseModel):
     staff_members: Optional[List[OnboardingStaff]] = None
 
 
+class DemoRequestCreate(BaseModel):
+    full_name: str = Field(..., min_length=2, max_length=150)
+    email: EmailStr
+    phone: str = Field(..., min_length=5, max_length=50)
+    hotel_name: str = Field(..., min_length=2, max_length=200)
+    property_type: Optional[str] = "boutique"
+    rooms_count: Optional[str] = "16-50"
+    city: Optional[str] = None
+    preferred_slot: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class DemoRequestResponse(BaseModel):
+    status: str
+    message: str
+    demo_id: int
+    hotel_name: str
+    contact_name: str
+    phone: str
+    email: str
+    preferred_slot: Optional[str] = None
+
+
 TokenResponse.model_rebuild()
+
 
 

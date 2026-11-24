@@ -16,9 +16,11 @@
 </head>
 <body>
   <div class="app-viewport-wrapper">
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="mobile-sidebar-backdrop" id="mobile-sidebar-backdrop"></div>
     <div class="app-frame">
       <!-- Sidebar (CheckinOS) -->
-      <aside class="sidebar no-print">
+      <aside class="sidebar no-print" id="app-sidebar">
         <div>
           <!-- Brand Logo & Name -->
           <a href="/" data-route="/" class="sidebar-brand-wrapper">
@@ -126,9 +128,16 @@
       <div class="main-canvas">
         <!-- Topbar Header -->
         <header class="topbar-header no-print">
-          <div class="page-title-block">
-            <h1 id="topbar-page-heading">Dashboard</h1>
-            <p id="topbar-page-subtext">Monitor your key performance indicators</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="mobile-hamburger-btn" id="mobile-sidebar-toggle" aria-label="Toggle navigation menu" type="button">
+              <svg style="width:20px; height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+            <div class="page-title-block">
+              <h1 id="topbar-page-heading">Dashboard</h1>
+              <p id="topbar-page-subtext">Monitor your key performance indicators</p>
+            </div>
           </div>
 
           <div class="topbar-actions-block">

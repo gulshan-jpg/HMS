@@ -123,6 +123,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (logoutBtn) {
     logoutBtn.onclick = () => API.logout();
   }
+
+  // Mobile Drawer Sidebar Navigation Toggle
+  const sidebarToggle = document.getElementById('mobile-sidebar-toggle');
+  const sidebar = document.getElementById('app-sidebar') || document.querySelector('.sidebar');
+  const backdrop = document.getElementById('mobile-sidebar-backdrop');
+
+  function openMobileSidebar() {
+    if (sidebar) sidebar.classList.add('is-open');
+    if (backdrop) backdrop.classList.add('is-open');
+    document.body.classList.add('sidebar-open');
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (backdrop) backdrop.classList.remove('is-open');
+    document.body.classList.remove('sidebar-open');
+  }
+
+  if (sidebarToggle) {
+    sidebarToggle.onclick = () => {
+      if (sidebar && sidebar.classList.contains('is-open')) {
+        closeMobileSidebar();
+      } else {
+        openMobileSidebar();
+      }
+    };
+  }
+  if (backdrop) {
+    backdrop.onclick = closeMobileSidebar;
+  }
+  // Auto-close drawer on mobile when clicking any navigation link
+  document.querySelectorAll('.sidebar-nav-list a, .sidebar-footer-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 820) {
+        closeMobileSidebar();
+      }
+    });
+  });
 });
 
 function setupRoleInterface(user) {

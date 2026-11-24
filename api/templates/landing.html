@@ -32,6 +32,7 @@
       font-size: 15px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
     a { color: inherit; text-decoration: none; }
 
@@ -46,7 +47,7 @@
     .nav-inner {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 16px 24px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -112,6 +113,41 @@
       background: #F3F4F6;
       color: #000000;
     }
+
+    /* Mobile Hamburger Button & Menu */
+    .mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 6px;
+      color: #FFFFFF;
+      padding: 6px 8px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+    .mobile-nav-menu {
+      display: none;
+      background: #0A0A0A;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 16px 20px 20px;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .mobile-nav-menu.is-open {
+      display: flex;
+    }
+    .mobile-nav-menu a {
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .mobile-nav-menu a:last-child {
+      border-bottom: none;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -124,6 +160,7 @@
       cursor: pointer;
       transition: all 0.15s ease;
       border: 1px solid transparent;
+      min-height: 40px;
     }
     .btn-secondary {
       background: var(--surface);
@@ -145,13 +182,15 @@
       padding: 12px 24px;
       font-size: 15px;
       font-weight: 600;
+      border-radius: 8px;
+      min-height: 46px;
     }
 
     /* Hero Section */
     .hero {
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 72px 24px 48px;
+      padding: 64px 20px 48px;
       text-align: center;
     }
     .hero-badge {
@@ -159,65 +198,64 @@
       align-items: center;
       gap: 8px;
       padding: 4px 12px;
-      border-radius: 20px;
-      background: var(--surface);
+      background: var(--surface-alt);
       border: 1px solid var(--border);
+      border-radius: 999px;
       font-size: 12px;
-      font-weight: 500;
       color: var(--text-secondary);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      font-weight: 500;
     }
-    .hero-badge span.dot {
+    .hero-badge .dot {
       width: 6px;
       height: 6px;
-      border-radius: 50%;
       background: var(--success);
+      border-radius: 50%;
     }
     .hero h1 {
-      font-size: 48px;
-      line-height: 1.15;
+      font-size: 44px;
       font-weight: 700;
       letter-spacing: -0.03em;
-      margin-bottom: 20px;
-      max-width: 840px;
-      margin-left: auto;
-      margin-right: auto;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      color: var(--text);
     }
     .hero p {
-      font-size: 18px;
+      font-size: 17px;
       color: var(--text-secondary);
       max-width: 680px;
-      margin: 0 auto 36px;
+      margin: 0 auto 32px;
       line-height: 1.6;
     }
     .hero-ctas {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      margin-bottom: 48px;
+      gap: 14px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
     }
     .hero-trust {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 24px;
+      gap: 16px;
       font-size: 13px;
       color: var(--text-tertiary);
+      flex-wrap: wrap;
     }
-    .hero-trust svg { width: 16px; height: 16px; fill: currentColor; }
 
     /* Mockup Showcase */
     .mockup-container {
-      max-width: 1140px;
-      margin: 0 auto 80px;
-      padding: 0 24px;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 16px;
     }
     .mockup-frame {
-      background: #FFFFFF;
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
       overflow: hidden;
     }
     .mockup-header {
@@ -226,176 +264,187 @@
       padding: 10px 16px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .mockup-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--border-strong);
+      background: #D1D5DB;
     }
     .mockup-url {
+      margin-left: 12px;
+      font-size: 11px;
       font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text-secondary);
-      background: #FFFFFF;
-      padding: 4px 16px;
+      color: var(--text-tertiary);
+      background: var(--surface);
+      padding: 3px 12px;
       border-radius: 4px;
       border: 1px solid var(--border);
-      margin-left: 12px;
-      flex: 1;
-      max-width: 380px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 70%;
     }
     .mockup-body {
       padding: 24px;
-      background: #FFFFFF;
-      text-align: left;
     }
     .grid-preview {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 20px;
     }
     .kpi-box {
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--surface);
     }
-    .kpi-title { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
-    .kpi-val { font-size: 22px; font-weight: 700; font-family: var(--font-mono); }
-    .kpi-sub { font-size: 11px; color: var(--success); margin-top: 4px; }
+    .kpi-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+    .kpi-val {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin: 4px 0 2px;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--success);
+    }
 
-    /* Features Grid */
+    /* Section Styles */
     .section-wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 64px 24px;
+      max-width: 1140px;
+      margin: 80px auto;
+      padding: 0 20px;
     }
     .section-header {
       text-align: center;
-      max-width: 640px;
-      margin: 0 auto 48px;
+      margin-bottom: 48px;
     }
     .section-header h2 {
       font-size: 32px;
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .section-header p {
-      font-size: 16px;
       color: var(--text-secondary);
+      font-size: 16px;
     }
+
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
     .feature-card {
-      background: #000000;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 8px;
-      padding: 28px;
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
       transition: all 0.2s ease;
     }
     .feature-card:hover {
-      border-color: rgba(255, 255, 255, 0.32);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      border-color: var(--border-strong);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
     .feature-icon {
       width: 40px;
       height: 40px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #FFFFFF;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 18px;
-    }
-    .feature-icon svg {
-      stroke: #FFFFFF;
+      margin-bottom: 16px;
+      color: var(--text);
     }
     .feature-card h3 {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
       margin-bottom: 8px;
-      color: #FFFFFF;
     }
     .feature-card p {
+      color: var(--text-secondary);
       font-size: 14px;
-      color: #E5E7EB;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     /* Testimonials */
     .testimonial-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-top: 36px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
     }
     .testimonial-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 32px;
+      border-radius: 10px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .testimonial-quote {
-      font-size: 16px;
-      line-height: 1.6;
+    .quote-text {
+      font-size: 14px;
       color: var(--text);
+      line-height: 1.6;
       margin-bottom: 20px;
     }
-    .testimonial-author {
+    .author-info {
       display: flex;
       align-items: center;
       gap: 12px;
     }
     .author-avatar {
-      width: 44px;
-      height: 44px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
+      background: #E5E7EB;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
+      color: #374151;
     }
-    .author-name { font-weight: 600; font-size: 14px; }
+    .author-name { font-size: 13px; font-weight: 600; }
     .author-role { font-size: 12px; color: var(--text-secondary); }
 
     /* CTA Banner */
     .cta-banner {
-      background: var(--accent);
+      background: #111827;
       color: #FFFFFF;
-      border-radius: 12px;
-      padding: 56px 40px;
+      border-radius: 16px;
+      padding: 56px 36px;
       text-align: center;
-      margin: 48px auto;
-      max-width: 1140px;
+      max-width: 1100px;
+      margin: 80px auto;
     }
     .cta-banner h2 {
       font-size: 32px;
       font-weight: 700;
+      letter-spacing: -0.02em;
       margin-bottom: 12px;
     }
     .cta-banner p {
-      font-size: 16px;
-      color: #D1D5DB;
-      max-width: 580px;
+      color: #9CA3AF;
+      max-width: 600px;
       margin: 0 auto 28px;
+      font-size: 16px;
     }
     .btn-white {
       background: #FFFFFF;
-      color: var(--accent);
+      color: #111827;
       font-weight: 600;
     }
     .btn-white:hover {
@@ -404,18 +453,17 @@
 
     /* Footer */
     footer {
-      border-top: 1px solid var(--border);
       background: var(--surface);
-      padding: 56px 24px 36px;
-      margin-top: 64px;
+      border-top: 1px solid var(--border);
+      padding: 56px 20px 32px;
+      margin-top: 80px;
     }
     .footer-inner {
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 0 auto 40px;
       display: grid;
-      grid-template-columns: 2fr repeat(3, 1fr);
+      grid-template-columns: 2fr 1fr 1fr 1fr;
       gap: 40px;
-      margin-bottom: 48px;
     }
     .footer-brand h4 { font-size: 17px; font-weight: 700; margin-bottom: 12px; }
     .footer-brand p { font-size: 14px; color: var(--text-secondary); max-width: 320px; line-height: 1.6; }
@@ -436,12 +484,41 @@
       color: var(--text-tertiary);
     }
 
+    /* ── Mobile Responsive Optimizations ──────────────────────────────────── */
     @media (max-width: 768px) {
-      .hero h1 { font-size: 34px; }
-      .grid-preview { grid-template-columns: 1fr 1fr; }
-      .feature-grid { grid-template-columns: 1fr; }
-      .testimonial-grid { grid-template-columns: 1fr; }
-      .footer-inner { grid-template-columns: 1fr; }
+      .nav-inner { padding: 12px 16px; }
+      .nav-links { display: none; }
+      .nav-actions { display: none; }
+      .mobile-nav-toggle { display: inline-flex; }
+
+      .hero { padding: 44px 16px 32px; }
+      .hero h1 { font-size: 27px; line-height: 1.25; }
+      .hero p { font-size: 14px; margin-bottom: 24px; }
+      .hero-ctas { flex-direction: column; width: 100%; max-width: 300px; margin: 0 auto; gap: 10px; }
+      .hero-ctas .btn { width: 100%; height: 44px; }
+      .hero-trust { font-size: 11px; flex-wrap: wrap; justify-content: center; gap: 6px; }
+
+      .mockup-container { padding: 0 10px; margin-top: 10px; }
+      .mockup-body { padding: 14px 10px; }
+      .grid-preview { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+      .kpi-box { padding: 10px; }
+      .kpi-title { font-size: 10px; }
+      .kpi-val { font-size: 18px; }
+      .kpi-sub { font-size: 10px; }
+
+      .section-wrap { margin: 48px auto; padding: 0 16px; }
+      .section-header { margin-bottom: 28px; }
+      .section-header h2 { font-size: 24px; }
+      .feature-grid { grid-template-columns: 1fr; gap: 14px; }
+      .testimonial-grid { grid-template-columns: 1fr; gap: 14px; }
+
+      .cta-banner { margin: 36px 12px; padding: 36px 18px; border-radius: 12px; }
+      .cta-banner h2 { font-size: 22px; }
+      .cta-banner p { font-size: 14px; margin-bottom: 22px; }
+      .cta-banner .btn-white { width: 100%; max-width: 280px; }
+
+      .footer-inner { grid-template-columns: 1fr; gap: 28px; padding: 36px 16px 20px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
 </head>
@@ -451,8 +528,10 @@
   <nav class="nav-bar">
     <div class="nav-inner">
       <div class="nav-brand">
-        <span>CheckinOS</span>
-        <span class="brand-badge">PMS</span>
+        <a href="/">
+          <span>CheckinOS</span>
+          <span class="brand-badge">PMS</span>
+        </a>
       </div>
       <div class="nav-links">
         <a href="#features">Features</a>
@@ -463,8 +542,25 @@
       </div>
       <div class="nav-actions">
         <a href="/login" class="btn btn-secondary" id="nav-signin-link">Sign in</a>
-        <a href="/signup" class="btn btn-primary">Start 14-day free trial</a>
+        <a href="/demo" class="btn btn-primary">Request a Demo</a>
       </div>
+      <!-- Mobile Hamburger Button -->
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation" type="button" onclick="toggleMobileNav()">
+        <svg style="width:22px; height:22px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div class="mobile-nav-menu" id="mobile-nav-menu">
+      <a href="#features" onclick="toggleMobileNav()">Features</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/security">Security</a>
+      <a href="/status">System Status</a>
+      <a href="/changelog">Changelog</a>
+      <a href="/login">Sign in to Hotel Console</a>
+      <a href="/demo" class="btn btn-primary" style="margin-top: 8px; width: 100%; justify-content: center;">Request a Demo &rarr;</a>
     </div>
   </nav>
 
@@ -479,11 +575,11 @@
       Replace legacy, sluggish software with a fast, intuitive PMS built for modern boutique hotels, resorts, and heritage stays. Zero installation, zero training required.
     </p>
     <div class="hero-ctas">
-      <a href="/signup" class="btn btn-primary btn-lg">Start 14-day free trial</a>
-      <a href="/login" class="btn btn-secondary btn-lg">Explore Live Demo</a>
+      <a href="/demo" class="btn btn-primary btn-lg">Request a Demo &rarr;</a>
+      <a href="/login" class="btn btn-secondary btn-lg">Explore Demo Mode</a>
     </div>
     <div class="hero-trust">
-      <span>14-day free trial</span>
+      <span>Personalized 1-on-1 Walkthrough</span>
       <span>•</span>
       <span>No credit card required</span>
       <span>•</span>
@@ -524,49 +620,52 @@
           </div>
         </div>
 
-        <div style="border: 1px solid var(--border); border-radius: 6px; padding: 18px; background: var(--surface-alt);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <!-- Touch-Friendly Responsive Table Box -->
+        <div style="border: 1px solid var(--border); border-radius: 8px; padding: 18px 16px; background: var(--surface-alt);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
             <strong style="font-size: 14px;">Recent Front Desk Activity</strong>
-            <span style="font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono);">Real-time Sync Active</span>
+            <span style="font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono);">• Real-time Sync Active</span>
           </div>
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead>
-              <tr style="text-align: left; color: var(--text-secondary); border-bottom: 1px solid var(--border);">
-                <th style="padding: 8px 0;">Guest</th>
-                <th>Room</th>
-                <th>Dates</th>
-                <th>Rate Plan</th>
-                <th>Folio Balance</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 10px 0; font-weight: 500;">Rahul Sharma</td>
-                <td><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">201</span></td>
-                <td>Nov 24 – Nov 28 (4 nights)</td>
-                <td>Bed & Breakfast</td>
-                <td style="font-family: var(--font-mono);">₹0.00 (Paid)</td>
-                <td><span style="color: var(--success); font-weight: 500;">Checked In</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 10px 0; font-weight: 500;">Priya Patel</td>
-                <td><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">301</span></td>
-                <td>Nov 24 – Nov 26 (2 nights)</td>
-                <td>Flexible Rate</td>
-                <td style="font-family: var(--font-mono);">₹15,000.00</td>
-                <td><span style="color: #2563EB; font-weight: 500;">Confirmed</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; font-weight: 500;">Vikram Malhotra</td>
-                <td><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">105</span></td>
-                <td>Nov 20 – Nov 24 (4 nights)</td>
-                <td>Long Stay 7+</td>
-                <td style="font-family: var(--font-mono);">₹0.00 (Settled)</td>
-                <td><span style="color: var(--text-secondary); font-weight: 500;">Checked Out</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <table style="width: 100%; min-width: 580px; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="text-align: left; color: var(--text-secondary); border-bottom: 1px solid var(--border);">
+                  <th style="padding: 8px 10px; white-space: nowrap;">Guest</th>
+                  <th style="padding: 8px 10px; white-space: nowrap;">Room</th>
+                  <th style="padding: 8px 10px; white-space: nowrap;">Dates</th>
+                  <th style="padding: 8px 10px; white-space: nowrap;">Rate Plan</th>
+                  <th style="padding: 8px 10px; white-space: nowrap;">Folio Balance</th>
+                  <th style="padding: 8px 10px; white-space: nowrap;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid var(--border);">
+                  <td style="padding: 10px; font-weight: 500; white-space: nowrap;">Rahul Sharma</td>
+                  <td style="padding: 10px; white-space: nowrap;"><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">201</span></td>
+                  <td style="padding: 10px; white-space: nowrap;">Nov 24 – Nov 28 (4 nights)</td>
+                  <td style="padding: 10px; white-space: nowrap;">Bed &amp; Breakfast</td>
+                  <td style="padding: 10px; font-family: var(--font-mono); white-space: nowrap;">₹0.00 (Paid)</td>
+                  <td style="padding: 10px; white-space: nowrap;"><span style="color: var(--success); font-weight: 500;">Checked In</span></td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border);">
+                  <td style="padding: 10px; font-weight: 500; white-space: nowrap;">Priya Patel</td>
+                  <td style="padding: 10px; white-space: nowrap;"><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">301</span></td>
+                  <td style="padding: 10px; white-space: nowrap;">Nov 24 – Nov 26 (2 nights)</td>
+                  <td style="padding: 10px; white-space: nowrap;">Flexible Rate</td>
+                  <td style="padding: 10px; font-family: var(--font-mono); white-space: nowrap;">₹15,000.00</td>
+                  <td style="padding: 10px; white-space: nowrap;"><span style="color: #2563EB; font-weight: 500;">Confirmed</span></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; font-weight: 500; white-space: nowrap;">Vikram Malhotra</td>
+                  <td style="padding: 10px; white-space: nowrap;"><span style="font-family: var(--font-mono); background: #fff; padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px;">105</span></td>
+                  <td style="padding: 10px; white-space: nowrap;">Nov 20 – Nov 24 (4 nights)</td>
+                  <td style="padding: 10px; white-space: nowrap;">Long Stay 7+</td>
+                  <td style="padding: 10px; font-family: var(--font-mono); white-space: nowrap;">₹0.00 (Settled)</td>
+                  <td style="padding: 10px; white-space: nowrap;"><span style="color: var(--text-secondary); font-weight: 500;">Checked Out</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -599,65 +698,78 @@
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
         </div>
-        <h3>Mobile Housekeeping Link</h3>
-        <p>Cleaning staff receive secure 24-hour links on their phones without passwords. One-tap room cleaning updates and maintenance reporting.</p>
+        <h3>Mobile Housekeeping Turnovers</h3>
+        <p>Zero-login mobile links for cleaning staff. Floor-by-floor room lists, dirty/clean status toggles, and maintenance ticketing.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <h3>Indian GST Hospitality Tax Invoices</h3>
+        <p>Dual 12% and 18% slab auto-calculation. Itemized CGST, SGST, print-ready PDF invoices, and nightly fiscal audit balancing.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
         </div>
-        <h3>Split Folios & GST Billing</h3>
-        <p>Split charges between corporate company folios and guest incidentals. Instant professional A4 tax invoices with sequential numbering.</p>
+        <h3>Dynamic Pricing & Rate Plans</h3>
+        <p>Manage BAR, non-refundable promotions, bed & breakfast add-ons, and length-of-stay discounts with automatic folio pricing.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
         </div>
-        <h3>Dynamic Rate Plans & Policies</h3>
-        <p>Configure flexible, non-refundable, and bed & breakfast plans. Automated cancellation penalties and refund calculations.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        </div>
-        <h3>One-Click Night Audit</h3>
-        <p>Roll business dates forward with automated room charge posting, tax accruals, daily balance verification, and manager reports.</p>
+        <h3>Enterprise Multi-Tenant Security</h3>
+        <p>Tenant isolation on PostgreSQL. Automated nightly audits, full audit trail logging, and role-based access control.</p>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials Section -->
-  <section class="section-wrap" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <!-- Social Proof / Testimonials -->
+  <section class="section-wrap" style="margin-top: 20px;">
     <div class="section-header">
-      <h2>Trusted by hospitality leaders</h2>
-      <p>Independent hotels and boutique resorts rely on CheckinOS every single day.</p>
+      <h2>Trusted by independent hoteliers across India</h2>
+      <p>Real feedback from boutique property owners who switched to CheckinOS.</p>
     </div>
     <div class="testimonial-grid">
       <div class="testimonial-card">
-        <div class="testimonial-quote">
+        <div class="quote-text">
           "We cut front desk check-in times from 7 minutes to under 45 seconds. Our staff was fully proficient within 20 minutes without any expensive on-site training."
         </div>
-        <div class="testimonial-author">
+        <div class="author-info">
           <div class="author-avatar">VS</div>
           <div>
             <div class="author-name">Vikram Singhania</div>
-            <div class="author-role">General Manager, The Heritage Palace Jaipur</div>
+            <div class="author-role">Managing Director, Heritage Palace Jaipur</div>
           </div>
         </div>
       </div>
 
       <div class="testimonial-card">
-        <div class="testimonial-quote">
-          "The mobile housekeeping view is phenomenal. Housekeeping staff don't need user logins—they tap the link on their WhatsApp and update room turnovers in real time."
+        <div class="quote-text">
+          "The mobile housekeeping links are a game changer. Housekeeping staff don't need logins or passwords — they just tap the WhatsApp link on their phones to update room status."
         </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">AD</div>
+        <div class="author-info">
+          <div class="author-avatar">AN</div>
           <div>
-            <div class="author-name">Ananya Desai</div>
-            <div class="author-role">Owner & Founder, Verve Stays Goa</div>
+            <div class="author-name">Ananya Nambiar</div>
+            <div class="author-role">General Manager, Backwater Bay Resort Kerala</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="quote-text">
+          "Indian GST compliance with 12% and 18% slabs used to take our accountant 3 hours every Sunday. With CheckinOS, PDF tax invoices and night audit reports are generated automatically."
+        </div>
+        <div class="author-info">
+          <div class="author-avatar">RD</div>
+          <div>
+            <div class="author-name">Rohan D'Souza</div>
+            <div class="author-role">Owner &amp; Founder, Verve Stays Goa</div>
           </div>
         </div>
       </div>
@@ -667,8 +779,8 @@
   <!-- CTA Banner -->
   <div class="cta-banner">
     <h2>Ready to modernise your hotel operations?</h2>
-    <p>Sign up in 30 seconds. Your account comes pre-configured with realistic sample rooms, rate plans, and guest bookings so you can explore immediately.</p>
-    <a href="/signup" class="btn btn-white btn-lg">Start your 14-day free trial</a>
+    <p>Book a personalized walkthrough for your property. See how CheckinOS handles your rooms, rates, GST tax invoices, and staff roles live.</p>
+    <a href="/demo" class="btn btn-white btn-lg">Request a Demo &rarr;</a>
   </div>
 
   <!-- Footer -->
@@ -701,7 +813,7 @@
         <ul>
           <li><a href="mailto:support@checkinos.io">support@checkinos.io</a></li>
           <li><a href="/login">Hotelier Login</a></li>
-          <li><a href="/signup">Free Trial</a></li>
+          <li><a href="/demo">Request a Demo</a></li>
         </ul>
       </div>
     </div>
@@ -712,6 +824,13 @@
   </footer>
 
   <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobile-nav-menu');
+      if (menu) {
+        menu.classList.toggle('is-open');
+      }
+    }
+
     if (localStorage.getItem('access_token')) {
       const link = document.getElementById('nav-signin-link');
       if (link) {

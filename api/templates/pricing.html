@@ -312,6 +312,69 @@
       font-size: 13px;
       color: var(--text-secondary);
     }
+
+    /* Mobile Hamburger Button & Menu */
+    .mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 6px;
+      color: #FFFFFF;
+      padding: 6px 8px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+    .mobile-nav-menu {
+      display: none;
+      background: #0A0A0A;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 16px 20px 20px;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .mobile-nav-menu.is-open {
+      display: flex;
+    }
+    .mobile-nav-menu a {
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .mobile-nav-menu a:last-child {
+      border-bottom: none;
+    }
+
+    /* Mobile Responsive Rules */
+    @media (max-width: 768px) {
+      .nav-inner { padding: 12px 16px; }
+      .nav-links { display: none; }
+      .nav-actions { display: none; }
+      .mobile-nav-toggle { display: inline-flex; }
+
+      .page-header { padding: 36px 16px 24px; }
+      .page-header h1 { font-size: 26px; }
+      .page-header p { font-size: 14px; }
+
+      .toggle-wrap { margin: 24px 0 36px; flex-wrap: wrap; }
+
+      .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 16px;
+        margin-bottom: 48px;
+      }
+      .plan-card { padding: 24px 20px; }
+
+      .table-section { padding: 0 16px; margin-bottom: 48px; }
+      .table-section h2 { font-size: 22px; }
+
+      .faq-section { padding: 0 16px; margin-bottom: 48px; }
+      .faq-section h2 { font-size: 22px; }
+      .faq-item { padding: 16px 18px; }
+    }
   </style>
 </head>
 <body>
@@ -332,14 +395,28 @@
       </div>
       <div class="nav-actions">
         <a href="/login" class="btn btn-secondary" style="margin-right: 8px;">Sign in</a>
-        <a href="/signup" class="btn btn-primary">Start free trial</a>
+        <a href="/demo" class="btn btn-primary">Request a Demo</a>
       </div>
+      <!-- Mobile hamburger toggle button -->
+      <button class="mobile-nav-toggle" id="mobile-nav-btn" aria-label="Toggle navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+    <!-- Mobile dropdown menu -->
+    <div class="mobile-nav-menu" id="mobile-nav-dropdown">
+      <a href="/#features">Features</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/security">Security</a>
+      <a href="/status">Status</a>
+      <a href="/changelog">Changelog</a>
+      <a href="/login">Sign in</a>
+      <a href="/demo" style="color: #60A5FA; font-weight: 600;">Request a Demo →</a>
     </div>
   </nav>
 
   <header class="page-header">
     <h1>Simple, transparent pricing for hotels of all sizes</h1>
-    <p>All plans include full feature access during your 14-day free trial. No setup fees, no contracts, cancel anytime.</p>
+    <p>All plans include full feature access, personalized demo & setup assistance. No setup fees, no contracts, cancel anytime.</p>
 
     <div class="toggle-wrap">
       <div class="toggle-btn">
@@ -360,7 +437,7 @@
         <span class="price-num" id="starter-price">₹2,499</span>
         <span class="price-period">/ month</span>
       </div>
-      <a href="/signup?plan=starter" class="btn btn-secondary btn-full">Start 14-day trial</a>
+      <a href="/demo?plan=starter" class="btn btn-secondary btn-full">Request a Demo</a>
       <ul class="plan-features">
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -398,7 +475,7 @@
         <span class="price-num" id="pro-price">₹6,999</span>
         <span class="price-period">/ month</span>
       </div>
-      <a href="/signup?plan=pro" class="btn btn-primary btn-full">Start 14-day trial</a>
+      <a href="/demo?plan=pro" class="btn btn-primary btn-full">Request a Demo</a>
       <ul class="plan-features">
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -439,7 +516,7 @@
         <span class="price-num" id="enterprise-price">₹14,999</span>
         <span class="price-period">/ month</span>
       </div>
-      <a href="/signup?plan=enterprise" class="btn btn-secondary btn-full">Start 14-day trial</a>
+      <a href="/demo?plan=enterprise" class="btn btn-secondary btn-full">Request a Demo</a>
       <ul class="plan-features">
         <li>
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -472,89 +549,91 @@
   <!-- Comparison Table -->
   <section class="table-section">
     <h2>Detailed Feature Comparison</h2>
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th>Capability</th>
-          <th class="center" style="width: 20%;">Starter</th>
-          <th class="center" style="width: 20%;">Pro</th>
-          <th class="center" style="width: 20%;">Enterprise</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="category-row"><td colspan="4">Capacity & Users</td></tr>
-        <tr>
-          <td>Room Inventory Limit</td>
-          <td class="center font-mono">15 rooms</td>
-          <td class="center font-mono">50 rooms</td>
-          <td class="center font-mono">Unlimited</td>
-        </tr>
-        <tr>
-          <td>User Accounts</td>
-          <td class="center font-mono">3 staff</td>
-          <td class="center font-mono">10 staff</td>
-          <td class="center font-mono">Unlimited</td>
-        </tr>
-        <tr>
-          <td>Role Presets (Front Desk, Housekeeping, etc.)</td>
-          <td class="center">Basic</td>
-          <td class="center">5 Presets</td>
-          <td class="center">Custom RBAC</td>
-        </tr>
+    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+      <table class="compare-table" style="min-width: 580px; margin-bottom: 0; border: none;">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th class="center" style="width: 20%;">Starter</th>
+            <th class="center" style="width: 20%;">Pro</th>
+            <th class="center" style="width: 20%;">Enterprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="category-row"><td colspan="4">Capacity & Users</td></tr>
+          <tr>
+            <td>Room Inventory Limit</td>
+            <td class="center font-mono">15 rooms</td>
+            <td class="center font-mono">50 rooms</td>
+            <td class="center font-mono">Unlimited</td>
+          </tr>
+          <tr>
+            <td>User Accounts</td>
+            <td class="center font-mono">3 staff</td>
+            <td class="center font-mono">10 staff</td>
+            <td class="center font-mono">Unlimited</td>
+          </tr>
+          <tr>
+            <td>Role Presets (Front Desk, Housekeeping, etc.)</td>
+            <td class="center">Basic</td>
+            <td class="center">5 Presets</td>
+            <td class="center">Custom RBAC</td>
+          </tr>
 
-        <tr class="category-row"><td colspan="4">Front Desk & Reservations</td></tr>
-        <tr>
-          <td>Room Availability Gantt Timeline</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-        </tr>
-        <tr>
-          <td>Rate Plans & LOS Discounts</td>
-          <td class="center">Base Rates</td>
-          <td class="center">Full Dynamic</td>
-          <td class="center">Full Dynamic</td>
-        </tr>
-        <tr>
-          <td>Group Booking Block Allocations</td>
-          <td class="center">—</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-        </tr>
+          <tr class="category-row"><td colspan="4">Front Desk & Reservations</td></tr>
+          <tr>
+            <td>Room Availability Gantt Timeline</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+          </tr>
+          <tr>
+            <td>Rate Plans & LOS Discounts</td>
+            <td class="center">Base Rates</td>
+            <td class="center">Full Dynamic</td>
+            <td class="center">Full Dynamic</td>
+          </tr>
+          <tr>
+            <td>Group Booking Block Allocations</td>
+            <td class="center">—</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+          </tr>
 
-        <tr class="category-row"><td colspan="4">Financials & Data Safety</td></tr>
-        <tr>
-          <td>Sequential GST Tax Invoices (PDF)</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-        </tr>
-        <tr>
-          <td>Automated Night Audit</td>
-          <td class="center">Manual</td>
-          <td class="center">Automated</td>
-          <td class="center">Automated</td>
-        </tr>
-        <tr>
-          <td>One-Click CSV Data Export</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-          <td class="center">Included</td>
-        </tr>
-        <tr>
-          <td>Audit Trail Log Retention</td>
-          <td class="center">7 days</td>
-          <td class="center">90 days</td>
-          <td class="center">Unlimited</td>
-        </tr>
-        <tr>
-          <td>Cloud Backups</td>
-          <td class="center">Daily</td>
-          <td class="center">Hourly</td>
-          <td class="center">Continuous</td>
-        </tr>
-      </tbody>
-    </table>
+          <tr class="category-row"><td colspan="4">Financials & Data Safety</td></tr>
+          <tr>
+            <td>Sequential GST Tax Invoices (PDF)</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+          </tr>
+          <tr>
+            <td>Automated Night Audit</td>
+            <td class="center">Manual</td>
+            <td class="center">Automated</td>
+            <td class="center">Automated</td>
+          </tr>
+          <tr>
+            <td>One-Click CSV Data Export</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+            <td class="center">Included</td>
+          </tr>
+          <tr>
+            <td>Audit Trail Log Retention</td>
+            <td class="center">7 days</td>
+            <td class="center">90 days</td>
+            <td class="center">Unlimited</td>
+          </tr>
+          <tr>
+            <td>Cloud Backups</td>
+            <td class="center">Daily</td>
+            <td class="center">Hourly</td>
+            <td class="center">Continuous</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <!-- FAQ Section -->
@@ -562,8 +641,8 @@
     <h2>Frequently Asked Questions</h2>
 
     <div class="faq-item">
-      <div class="faq-q">What happens after my 14-day free trial ends?</div>
-      <div class="faq-a">Your data remains completely safe. At the end of the trial, you will be prompted to pick a subscription plan to continue taking reservations and generating invoices. If you decide not to continue, you can download all your guests, rooms, and financial logs via a single-click ZIP export at any time.</div>
+      <div class="faq-q">How does the hotel demo and setup work?</div>
+      <div class="faq-a">Our product specialists schedule a 20-minute live demo configured to your property type, room count, and operational flow. We demonstrate real-time check-ins, housekeeping dispatch, multi-folio billing, GST invoicing, and data import from your existing software.</div>
     </div>
 
     <div class="faq-item">
@@ -616,6 +695,14 @@
         document.getElementById('pro-price').innerText = '₹5,830';
         document.getElementById('enterprise-price').innerText = '₹12,500';
       }
+    }
+    // Mobile navigation toggle
+    const mobileNavBtn = document.getElementById('mobile-nav-btn');
+    const mobileNavDropdown = document.getElementById('mobile-nav-dropdown');
+    if (mobileNavBtn && mobileNavDropdown) {
+      mobileNavBtn.addEventListener('click', () => {
+        mobileNavDropdown.classList.toggle('is-open');
+      });
     }
   </script>
 </body>

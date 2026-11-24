@@ -48,6 +48,9 @@ htmlcov/
 .env
 .env.local
 
+# Scratch and diagnostic scripts
+scratch/
+
 # IDE & Editor caches
 .vscode/
 .idea/

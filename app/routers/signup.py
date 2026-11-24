@@ -15,6 +15,7 @@ from app.models import (
     ActivityLog,
     BusinessDate,
     CancellationPolicy,
+    DemoRequest,
     EmailTemplate,
     Folio,
     FolioItem,
@@ -32,6 +33,8 @@ from app.models import (
 )
 from app.schemas import (
     ChangePasswordRequest,
+    DemoRequestCreate,
+    DemoRequestResponse,
     ForgotPasswordRequest,
     OnboardingRatePlan,
     OnboardingRoom,
@@ -1076,4 +1079,77 @@ def save_onboarding_data(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to save onboarding configuration: {str(exc)}",
         )
+
+
+def ensure_demo_requests_table(db: Session):
+    """Ensure demo_requests table exists on Supabase PostgreSQL or SQLite."""
+    is_pg = db.bind and db.bind.dialect.name == "postgresql"
+    id_type = "SERIAL PRIMARY KEY" if is_pg else "INTEGER PRIMARY KEY AUTOINCREMENT"
+    tz_type = "TIMESTAMPTZ" if is_pg else "DATETIME"
+    sql = f"""
+    CREATE TABLE IF NOT EXISTS demo_requests (
+        id {id_type},
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        hotel_name VARCHAR(255) NOT NULL,
+        property_type VARCHAR(50) DEFAULT 'boutique',
+        rooms_count VARCHAR(50) DEFAULT '16-50',
+        city VARCHAR(150),
+        preferred_slot VARCHAR(100),
+        notes TEXT,
+        status VARCHAR(50) DEFAULT 'pending',
+        created_at {tz_type} DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+    try:
+        db.execute(text(sql))
+        db.commit()
+    except Exception:
+        db.rollback()
+
+
+@router.post("/demo-request", response_model=DemoRequestResponse, status_code=status.HTTP_201_CREATED)
+def request_hotel_demo(
+    payload: DemoRequestCreate,
+    db: Session = Depends(get_db),
+):
+    """Public endpoint to submit a hotel demo booking request."""
+    ensure_demo_requests_table(db)
+    sync_postgres_sequences(db)
+
+    try:
+        demo = DemoRequest(
+            full_name=payload.full_name.strip(),
+            email=payload.email.strip().lower(),
+            phone=payload.phone.strip(),
+            hotel_name=payload.hotel_name.strip(),
+            property_type=payload.property_type or "boutique",
+            rooms_count=payload.rooms_count or "16-50",
+            city=payload.city.strip() if payload.city else None,
+            preferred_slot=payload.preferred_slot or "Soonest Available",
+            notes=payload.notes.strip() if payload.notes else None,
+            status="pending",
+        )
+        db.add(demo)
+        db.commit()
+        db.refresh(demo)
+
+        return DemoRequestResponse(
+            status="success",
+            message="Demo booked successfully",
+            demo_id=demo.id,
+            hotel_name=demo.hotel_name,
+            contact_name=demo.full_name,
+            phone=demo.phone,
+            email=demo.email,
+            preferred_slot=demo.preferred_slot,
+        )
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to submit demo request: {str(exc)}",
+        )
+
 

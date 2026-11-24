@@ -532,3 +532,21 @@ class AuditLog(Base):
     ip_address = Column(String(50), nullable=True)
     user_agent = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class DemoRequest(Base):
+    __tablename__ = "demo_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False, index=True)
+    phone = Column(String(50), nullable=False)
+    hotel_name = Column(String(255), nullable=False)
+    property_type = Column(String(50), default="boutique", nullable=False)
+    rooms_count = Column(String(50), default="16-50", nullable=False)
+    city = Column(String(150), nullable=True)
+    preferred_slot = Column(String(100), nullable=True)
+    notes = Column(Text, nullable=True)
+    status = Column(String(50), default="pending", nullable=False)  # pending, contacted, scheduled, completed
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
