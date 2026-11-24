@@ -1,0 +1,23 @@
+name: Keep Vercel Warm (No Sleep)
+
+on:
+  schedule:
+    # Runs every 5 minutes to prevent Vercel serverless cold starts
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  warm-up:
+    name: Ping Healthz Endpoint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Warm-up Ping
+        run: |
+          echo "Pinging https://hms-hotel-pms.vercel.app/healthz..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://hms-hotel-pms.vercel.app/healthz")
+          echo "Received HTTP status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "Successfully kept Vercel container and database alive!"
+          else
+            echo "Warning: Received status $HTTP_STATUS"
+          fi
