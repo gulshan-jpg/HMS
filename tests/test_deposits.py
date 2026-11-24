@@ -84,6 +84,7 @@ async def test_checkin_auto_applies_deposit_credit(client, seed_test_data, db_se
     cin_resp = await client.post(f"/api/reservations/{res_id}/check-in", headers=headers)
     assert cin_resp.status_code == 200
 
+    db_session.expire_all()
     # Verify negative deposit_applied item on folio
     dep_item = (
         db_session.query(FolioItem)

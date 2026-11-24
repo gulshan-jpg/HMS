@@ -134,3 +134,72 @@ async def test_sequential_multi_tenant_signups_no_collision(client, db_session):
     assert any(r.number == "101" for r in rooms1)
     assert any(r.number == "101" for r in rooms2)
 
+
+@pytest.mark.asyncio
+async def test_onboarding_get_and_save_customized_data(client, db_session):
+    """Verify new user can fetch pre-seeded onboarding setup and save customized room types, rooms, rate plans, and taxes."""
+    signup_payload = {
+        "hotel_name": "Jaipur Palace Suites",
+        "full_name": "Karan Mehra",
+        "email": "karan@jaipurpalace.in",
+        "password": "Password123!",
+        "currency": "INR",
+        "timezone": "Asia/Kolkata",
+        "plan": "pro",
+    }
+    signup_resp = await client.post("/api/signup", json=signup_payload)
+    assert signup_resp.status_code == 201
+    token = signup_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 1. Fetch initial onboarding data
+    get_resp = await client.get("/api/onboarding/data", headers=headers)
+    assert get_resp.status_code == 200
+    init_data = get_resp.json()
+    assert init_data["hotel_name"] == "Jaipur Palace Suites"
+    assert len(init_data["room_types"]) >= 3
+    assert len(init_data["rooms"]) >= 5
+
+    # 2. Save customized onboarding data (Step 1-6)
+    save_payload = {
+        "hotel_name": "The Royal Palace Jaipur",
+        "city": "Jaipur, Rajasthan",
+        "currency": "INR",
+        "gstin": "08ABCDE1234F1Z5",
+        "room_types": [
+            {"name": "Luxury King Suite", "base_rate": 8900.0, "max_occupancy": 2, "description": "King Bed with Garden View"},
+            {"name": "Royal Penthouse", "base_rate": 28000.0, "max_occupancy": 4, "description": "Top floor terrace"}
+        ],
+        "rooms": [
+            {"number": "101", "floor": 1, "room_type_name": "Luxury King Suite"},
+            {"number": "102", "floor": 1, "room_type_name": "Luxury King Suite"},
+            {"number": "501", "floor": 5, "room_type_name": "Royal Penthouse"}
+        ],
+        "rate_plans": [
+            {"name": "Flexible Standard Rate", "code": "FLEX", "modifier_type": "percent", "modifier_value": 0.0, "description": "Best Flexible Rate", "refundable": True},
+            {"name": "Member Exclusive", "code": "MEMB", "modifier_type": "percent", "modifier_value": -12.0, "description": "12% Off", "refundable": False}
+        ],
+        "taxes": [
+            {"name": "Standard GST (12%)", "rate": 12.0, "applies_to": "rooms", "description": "Tariffs <= 7500"}
+        ],
+        "staff": {
+            "full_name": "Radhika Sharma",
+            "email": "radhika@jaipurpalace.in",
+            "role": "front_desk"
+        }
+    }
+    save_resp = await client.post("/api/onboarding/save", json=save_payload, headers=headers)
+    assert save_resp.status_code == 200
+    assert save_resp.json()["status"] == "ok"
+
+    # 3. Verify changes reflected in GET /api/onboarding/data
+    verify_resp = await client.get("/api/onboarding/data", headers=headers)
+    assert verify_resp.status_code == 200
+    updated_data = verify_resp.json()
+    assert updated_data["hotel_name"] == "The Royal Palace Jaipur"
+    assert updated_data["gstin"] == "08ABCDE1234F1Z5"
+    assert any(rt["name"] == "Luxury King Suite" and rt["base_rate"] == 8900.0 for rt in updated_data["room_types"])
+    assert any(r["number"] == "501" and r["floor"] == 5 for r in updated_data["rooms"])
+    assert any(rp["code"] == "MEMB" and rp["modifier_value"] == -12.0 for rp in updated_data["rate_plans"])
+
+

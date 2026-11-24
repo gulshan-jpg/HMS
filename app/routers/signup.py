@@ -18,6 +18,7 @@ from app.models import (
     Folio,
     FolioItem,
     Guest,
+    HousekeepingTask,
     Organization,
     Payment,
     RatePlan,
@@ -31,6 +32,12 @@ from app.models import (
 from app.schemas import (
     ChangePasswordRequest,
     ForgotPasswordRequest,
+    OnboardingRatePlan,
+    OnboardingRoom,
+    OnboardingRoomType,
+    OnboardingSaveRequest,
+    OnboardingStaff,
+    OnboardingTaxRate,
     OrganizationResponse,
     ResetPasswordRequest,
     SignupRequest,
@@ -61,67 +68,60 @@ def generate_unique_slug(base_name: str, db: Session) -> str:
 
 
 def seed_organization_demo_data(org: Organization, db: Session) -> None:
-    """Auto-seeds a newly registered hotel organization with realistic demo data."""
+    """Auto-seeds a newly registered hotel organization with realistic demo data matching onboarding."""
     # 1. Room Types
-    rt_std = RoomType(
-        organization_id=org.id,
-        name="Standard Queen",
-        code=f"STD-Q-{org.id}",
-        description="Comfortable standard queen room with city views",
-        base_rate=Decimal("3500.00"),
-        max_occupancy=2,
-        is_demo=True,
-    )
     rt_dlx = RoomType(
         organization_id=org.id,
         name="Deluxe King",
         code=f"DLX-K-{org.id}",
-        description="Spacious king room with luxury bathroom and balcony",
-        base_rate=Decimal("6500.00"),
+        description="Max 2 Guests • Standard King Bed",
+        base_rate=Decimal("7500.00"),
         max_occupancy=2,
         is_demo=True,
     )
-    rt_ste = RoomType(
+    rt_exe = RoomType(
         organization_id=org.id,
-        name="Executive Suite",
-        code=f"EXE-S-{org.id}",
-        description="Premium suite with separate living room and skyline views",
-        base_rate=Decimal("12000.00"),
+        name="Executive Heritage Suite",
+        code=f"EXE-H-{org.id}",
+        description="Max 4 Guests • Living Room + Balcony",
+        base_rate=Decimal("16500.00"),
         max_occupancy=4,
         is_demo=True,
     )
-    db.add_all([rt_std, rt_dlx, rt_ste])
+    rt_std = RoomType(
+        organization_id=org.id,
+        name="Standard Double",
+        code=f"STD-D-{org.id}",
+        description="Max 2 Guests • Courtyard View",
+        base_rate=Decimal("5000.00"),
+        max_occupancy=2,
+        is_demo=True,
+    )
+    rt_prs = RoomType(
+        organization_id=org.id,
+        name="Presidential Penthouse",
+        code=f"PRS-P-{org.id}",
+        description="Max 6 Guests • Private Jacuzzi",
+        base_rate=Decimal("35000.00"),
+        max_occupancy=6,
+        is_demo=True,
+    )
+    db.add_all([rt_dlx, rt_exe, rt_std, rt_prs])
     db.flush()
 
     # 2. Rooms (10 rooms)
-    rooms = []
-    for i in range(1, 6):
-        rooms.append(Room(
-            organization_id=org.id,
-            number=f"10{i}",
-            floor=1,
-            room_type_id=rt_std.id,
-            status="available" if i > 2 else "occupied",
-            is_demo=True,
-        ))
-    for i in range(1, 4):
-        rooms.append(Room(
-            organization_id=org.id,
-            number=f"20{i}",
-            floor=2,
-            room_type_id=rt_dlx.id,
-            status="available" if i > 1 else "dirty",
-            is_demo=True,
-        ))
-    for i in range(4, 6):
-        rooms.append(Room(
-            organization_id=org.id,
-            number=f"20{i}",
-            floor=2,
-            room_type_id=rt_ste.id,
-            status="available",
-            is_demo=True,
-        ))
+    rooms = [
+        Room(organization_id=org.id, number="101", floor=1, room_type_id=rt_dlx.id, status="occupied", is_demo=True),
+        Room(organization_id=org.id, number="102", floor=1, room_type_id=rt_dlx.id, status="occupied", is_demo=True),
+        Room(organization_id=org.id, number="201", floor=2, room_type_id=rt_dlx.id, status="available", is_demo=True),
+        Room(organization_id=org.id, number="202", floor=2, room_type_id=rt_dlx.id, status="dirty", is_demo=True),
+        Room(organization_id=org.id, number="301", floor=3, room_type_id=rt_exe.id, status="available", is_demo=True),
+        Room(organization_id=org.id, number="302", floor=3, room_type_id=rt_exe.id, status="available", is_demo=True),
+        Room(organization_id=org.id, number="303", floor=3, room_type_id=rt_std.id, status="available", is_demo=True),
+        Room(organization_id=org.id, number="304", floor=3, room_type_id=rt_std.id, status="available", is_demo=True),
+        Room(organization_id=org.id, number="401", floor=4, room_type_id=rt_prs.id, status="available", is_demo=True),
+        Room(organization_id=org.id, number="402", floor=4, room_type_id=rt_prs.id, status="available", is_demo=True),
+    ]
     db.add_all(rooms)
     db.flush()
 
@@ -154,7 +154,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
             hotel_id=org.id,
             code=f"FLEX-{org.id}",
             name="Flexible Rate",
-            description="Best flexible rate with free cancellation",
+            description="Base Rate (Refundable)",
             modifier_type="percent",
             modifier_value=Decimal("0.00"),
             cancellation_policy_id=pol_flex.id,
@@ -166,7 +166,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
             hotel_id=org.id,
             code=f"NR-{org.id}",
             name="Non-Refundable Promo",
-            description="10% discount for prepaid non-refundable bookings",
+            description="-10% Off Base",
             modifier_type="percent",
             modifier_value=Decimal("-10.00"),
             cancellation_policy_id=pol_strict.id,
@@ -178,9 +178,9 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
             hotel_id=org.id,
             code=f"BB-{org.id}",
             name="Bed & Breakfast",
-            description="Room plus chef complimentary buffet breakfast",
+            description="+₹500 / night",
             modifier_type="absolute",
-            modifier_value=Decimal("1200.00"),
+            modifier_value=Decimal("500.00"),
             meal_plan="breakfast",
             cancellation_policy_id=pol_flex.id,
             refundable=True,
@@ -191,7 +191,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
             hotel_id=org.id,
             code=f"LONG-{org.id}",
             name="Long Stay 7+ Nights",
-            description="15% discount for extended stays",
+            description="-15% Off Base",
             modifier_type="percent",
             modifier_value=Decimal("-15.00"),
             min_stay=7,
@@ -207,7 +207,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
     tax_12 = TaxRate(
         organization_id=org.id,
         hotel_id=org.id,
-        name="GST 12% (Rooms ≤ ₹7,500)",
+        name="Standard Room GST (12%)",
         rate=Decimal("12.00"),
         applies_to="rooms",
         type="exclusive",
@@ -217,7 +217,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
     tax_18 = TaxRate(
         organization_id=org.id,
         hotel_id=org.id,
-        name="GST 18% (Luxury Rooms > ₹7,500)",
+        name="Luxury Suite GST (18%)",
         rate=Decimal("18.00"),
         applies_to="rooms",
         type="exclusive",
@@ -262,7 +262,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
         check_in_date=today,
         check_out_date=today + timedelta(days=2),
         adults=1,
-        nightly_rate=Decimal("3500.00"),
+        nightly_rate=Decimal("7500.00"),
         status="checked_in",
         is_demo=True,
     )
@@ -275,7 +275,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
         check_in_date=today,
         check_out_date=today + timedelta(days=3),
         adults=2,
-        nightly_rate=Decimal("3150.00"),
+        nightly_rate=Decimal("6750.00"),
         status="checked_in",
         is_demo=True,
     )
@@ -288,7 +288,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
         check_in_date=today + timedelta(days=1),
         check_out_date=today + timedelta(days=4),
         adults=1,
-        nightly_rate=Decimal("3500.00"),
+        nightly_rate=Decimal("7500.00"),
         status="booked",
         is_demo=True,
     )
@@ -296,12 +296,12 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
         organization_id=org.id,
         confirmation_number=f"DEMO-{org.id}-104",
         guest_id=guests[3].id,
-        room_id=rooms[5].id,
+        room_id=rooms[4].id,
         rate_plan_id=plans[2].id,
         check_in_date=today + timedelta(days=2),
         check_out_date=today + timedelta(days=5),
         adults=2,
-        nightly_rate=Decimal("7700.00"),
+        nightly_rate=Decimal("17000.00"),
         status="booked",
         is_demo=True,
     )
@@ -314,7 +314,7 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
         check_in_date=today + timedelta(days=3),
         check_out_date=today + timedelta(days=6),
         adults=2,
-        nightly_rate=Decimal("12000.00"),
+        nightly_rate=Decimal("35000.00"),
         status="booked",
         is_demo=True,
     )
@@ -684,3 +684,324 @@ def mark_tour_completed(
     current_user.tour_completed = True
     db.commit()
     return {"status": "ok", "tour_completed": True}
+
+
+# ── Interactive Onboarding Wizard Endpoints ─────────────────────────────────
+
+@router.get("/onboarding/data")
+def get_onboarding_data(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Fetch current organization's configuration and pre-seeded rooms, rate plans, and taxes."""
+    org = db.query(Organization).filter(Organization.id == current_user.organization_id).first()
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+
+    room_types = db.query(RoomType).filter(
+        RoomType.organization_id == org.id,
+        RoomType.deleted_at.is_(None),
+    ).order_by(RoomType.id.asc()).all()
+
+    rooms = db.query(Room).filter(
+        Room.organization_id == org.id,
+        Room.deleted_at.is_(None),
+    ).order_by(Room.floor.asc(), Room.number.asc()).all()
+
+    rate_plans = db.query(RatePlan).filter(
+        RatePlan.organization_id == org.id,
+        RatePlan.deleted_at.is_(None),
+    ).order_by(RatePlan.id.asc()).all()
+
+    taxes = db.query(TaxRate).filter(
+        TaxRate.organization_id == org.id,
+        TaxRate.deleted_at.is_(None),
+    ).order_by(TaxRate.id.asc()).all()
+
+    rt_map = {rt.id: rt.name for rt in room_types}
+
+    city_val = ""
+    if org.address and "," in org.address:
+        parts = org.address.split(",")
+        city_val = parts[-1].strip() if len(parts) > 1 else org.address
+    elif org.address:
+        city_val = org.address
+
+    return {
+        "hotel_name": org.name,
+        "city": city_val or "Jaipur, Rajasthan",
+        "currency": org.currency or "INR",
+        "gstin": org.tax_id or "",
+        "room_types": [
+            {
+                "id": rt.id,
+                "name": rt.name,
+                "code": rt.code.split("-")[0] if "-" in rt.code else rt.code,
+                "base_rate": float(rt.base_rate),
+                "max_occupancy": rt.max_occupancy,
+                "description": rt.description or "Standard King Bed",
+            }
+            for rt in room_types
+        ],
+        "rooms": [
+            {
+                "id": r.id,
+                "number": r.number,
+                "floor": r.floor,
+                "room_type_name": rt_map.get(r.room_type_id, (room_types[0].name if room_types else "Deluxe King")),
+            }
+            for r in rooms
+        ],
+        "rate_plans": [
+            {
+                "id": rp.id,
+                "code": rp.code.split("-")[0] if "-" in rp.code else rp.code,
+                "name": rp.name,
+                "description": rp.description or "",
+                "modifier_type": rp.modifier_type,
+                "modifier_value": float(rp.modifier_value),
+                "refundable": rp.refundable,
+            }
+            for rp in rate_plans
+        ],
+        "taxes": [
+            {
+                "id": t.id,
+                "name": t.name,
+                "rate": float(t.rate),
+                "applies_to": t.applies_to,
+                "description": f"Tariffs {'≤' if t.rate <= 12 else '>'} ₹7,500",
+            }
+            for t in taxes
+        ],
+    }
+
+
+@router.post("/onboarding/save")
+def save_onboarding_data(
+    payload: OnboardingSaveRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Persists customized room types, room inventory, rate plans, and taxes from onboarding wizard."""
+    org = db.query(Organization).filter(Organization.id == current_user.organization_id).first()
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+
+    try:
+        # 1. Update Organization Profile
+        if payload.hotel_name and payload.hotel_name.strip():
+            org.name = payload.hotel_name.strip()
+        if payload.city and payload.city.strip():
+            org.address = f"{org.name}, {payload.city.strip()}"
+        if payload.gstin is not None:
+            org.tax_id = payload.gstin.strip() if payload.gstin else None
+        if payload.currency:
+            org.currency = payload.currency.strip().upper()
+
+        # 2. Synchronize Room Types
+        rt_name_to_obj = {}
+        if payload.room_types is not None and len(payload.room_types) > 0:
+            existing_rts = db.query(RoomType).filter(
+                RoomType.organization_id == org.id,
+                RoomType.deleted_at.is_(None),
+            ).all()
+            existing_by_name = {rt.name.strip().lower(): rt for rt in existing_rts}
+
+            for item in payload.room_types:
+                item_name = item.name.strip()
+                code_prefix = slugify(item.code or item_name)[:4].upper() or "ROOM"
+                base_code = f"{code_prefix}-{org.id}"
+
+                if item_name.lower() in existing_by_name:
+                    rt = existing_by_name[item_name.lower()]
+                    rt.name = item_name
+                    rt.base_rate = item.base_rate
+                    rt.max_occupancy = item.max_occupancy
+                    rt.description = item.description
+                else:
+                    counter = 1
+                    test_code = base_code
+                    while db.query(RoomType).filter(RoomType.organization_id == org.id, RoomType.code == test_code).first():
+                        test_code = f"{code_prefix}{counter}-{org.id}"
+                        counter += 1
+                    rt = RoomType(
+                        organization_id=org.id,
+                        name=item_name,
+                        code=test_code,
+                        description=item.description or "Standard Bed",
+                        base_rate=item.base_rate,
+                        max_occupancy=item.max_occupancy,
+                        is_demo=False,
+                    )
+                    db.add(rt)
+                db.flush()
+                rt_name_to_obj[item_name.lower()] = rt
+
+        # Refresh all active room types
+        all_rts = db.query(RoomType).filter(
+            RoomType.organization_id == org.id,
+            RoomType.deleted_at.is_(None),
+        ).all()
+        for rt in all_rts:
+            rt_name_to_obj[rt.name.strip().lower()] = rt
+        fallback_rt = all_rts[0] if all_rts else None
+
+        # 3. Synchronize Rooms
+        if payload.rooms is not None and fallback_rt:
+            existing_rooms = db.query(Room).filter(
+                Room.organization_id == org.id,
+                Room.deleted_at.is_(None),
+            ).all()
+            existing_by_number = {r.number.strip(): r for r in existing_rooms}
+            submitted_numbers = set()
+
+            for r_item in payload.rooms:
+                r_num = str(r_item.number).strip()
+                if not r_num:
+                    continue
+                submitted_numbers.add(r_num)
+                target_rt = rt_name_to_obj.get(r_item.room_type_name.strip().lower(), fallback_rt)
+
+                if r_num in existing_by_number:
+                    room = existing_by_number[r_num]
+                    room.floor = r_item.floor
+                    room.room_type_id = target_rt.id
+                else:
+                    room = Room(
+                        organization_id=org.id,
+                        number=r_num,
+                        floor=r_item.floor,
+                        room_type_id=target_rt.id,
+                        status="available",
+                        is_demo=False,
+                    )
+                    db.add(room)
+                db.flush()
+
+            # Handle removed rooms safely
+            active_rooms = db.query(Room).filter(
+                Room.organization_id == org.id,
+                Room.number.in_(list(submitted_numbers)),
+            ).all()
+            first_active_room = active_rooms[0] if active_rooms else None
+
+            for old_r in existing_rooms:
+                if old_r.number.strip() not in submitted_numbers:
+                    if first_active_room:
+                        db.query(Reservation).filter(Reservation.room_id == old_r.id).update(
+                            {"room_id": first_active_room.id}, synchronize_session=False
+                        )
+                        db.query(HousekeepingTask).filter(HousekeepingTask.room_id == old_r.id).update(
+                            {"room_id": first_active_room.id}, synchronize_session=False
+                        )
+                    else:
+                        db.query(HousekeepingTask).filter(HousekeepingTask.room_id == old_r.id).delete(synchronize_session=False)
+                    db.delete(old_r)
+            db.flush()
+
+        # 4. Synchronize Rate Plans
+        if payload.rate_plans is not None:
+            existing_plans = db.query(RatePlan).filter(
+                RatePlan.organization_id == org.id,
+                RatePlan.deleted_at.is_(None),
+            ).all()
+            plan_by_code = {p.code.split("-")[0].upper(): p for p in existing_plans}
+
+            for p_item in payload.rate_plans:
+                p_code = p_item.code.strip().upper()
+                if p_code in plan_by_code:
+                    plan = plan_by_code[p_code]
+                    plan.name = p_item.name.strip()
+                    plan.description = p_item.description
+                    plan.modifier_type = p_item.modifier_type
+                    plan.modifier_value = p_item.modifier_value
+                    plan.refundable = p_item.refundable
+                else:
+                    plan = RatePlan(
+                        organization_id=org.id,
+                        hotel_id=org.id,
+                        code=f"{p_code}-{org.id}",
+                        name=p_item.name.strip(),
+                        description=p_item.description or "",
+                        modifier_type=p_item.modifier_type,
+                        modifier_value=p_item.modifier_value,
+                        refundable=p_item.refundable,
+                        is_demo=False,
+                    )
+                    db.add(plan)
+                db.flush()
+
+        # 5. Synchronize Tax Rates
+        if payload.taxes is not None:
+            existing_taxes = db.query(TaxRate).filter(
+                TaxRate.organization_id == org.id,
+                TaxRate.deleted_at.is_(None),
+            ).all()
+            tax_by_name = {t.name.strip().lower(): t for t in existing_taxes}
+
+            for t_item in payload.taxes:
+                t_name = t_item.name.strip()
+                if t_name.lower() in tax_by_name:
+                    tax = tax_by_name[t_name.lower()]
+                    tax.rate = t_item.rate
+                    tax.applies_to = t_item.applies_to
+                else:
+                    tax = TaxRate(
+                        organization_id=org.id,
+                        hotel_id=org.id,
+                        name=t_name,
+                        rate=t_item.rate,
+                        applies_to=t_item.applies_to,
+                        type="exclusive",
+                        per="night",
+                        is_demo=False,
+                    )
+                    db.add(tax)
+                db.flush()
+
+        # 6. Optional Staff Invitation
+        if payload.staff and payload.staff.email:
+            st_email = payload.staff.email.strip().lower()
+            existing_st = db.query(User).filter(User.email == st_email).first()
+            if not existing_st and payload.staff.full_name:
+                st_username = st_email.split("@")[0].replace(".", "_") + f"_{secrets.token_hex(2)}"
+                st_user = User(
+                    organization_id=org.id,
+                    email=st_email,
+                    username=st_username,
+                    full_name=payload.staff.full_name.strip(),
+                    hashed_password=get_password_hash("WelcomePass123!"),
+                    role=payload.staff.role or "front_desk",
+                    email_verified=True,
+                    is_active=True,
+                    tour_completed=False,
+                )
+                db.add(st_user)
+                db.flush()
+                st_membership = UserOrgMembership(
+                    user_id=st_user.id,
+                    organization_id=org.id,
+                    role=payload.staff.role or "front_desk",
+                )
+                db.add(st_membership)
+
+        # 7. Complete Onboarding
+        current_user.tour_completed = True
+        log = ActivityLog(
+            organization_id=org.id,
+            event_type="onboarding_customized",
+            description="User saved customized hotel rooms, rates, and tax setup in onboarding wizard.",
+            actor=current_user.full_name,
+        )
+        db.add(log)
+        db.commit()
+
+        return {"status": "ok", "message": "Onboarding settings successfully saved!"}
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to save onboarding configuration: {str(exc)}",
+        )
+

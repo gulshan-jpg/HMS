@@ -1200,6 +1200,56 @@ class ImportExecuteResponse(BaseModel):
     errors: List[dict]
 
 
+# ── Onboarding Customization Schemas ─────────────────────────────────────────
+
+class OnboardingRoomType(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    base_rate: Decimal = Field(..., ge=0)
+    max_occupancy: int = Field(2, ge=1, le=20)
+    description: Optional[str] = None
+    code: Optional[str] = None
+
+
+class OnboardingRoom(BaseModel):
+    number: str = Field(..., min_length=1, max_length=20)
+    floor: int = Field(1, ge=0, le=100)
+    room_type_name: str = Field(..., min_length=1)
+
+
+class OnboardingRatePlan(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    code: str = Field(..., min_length=1, max_length=20)
+    modifier_type: str = Field("percent", pattern="^(percent|absolute)$")
+    modifier_value: Decimal = Field(Decimal("0.00"))
+    description: Optional[str] = None
+    refundable: bool = True
+
+
+class OnboardingTaxRate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    rate: Decimal = Field(Decimal("12.00"), ge=0, le=100)
+    applies_to: str = Field("rooms", pattern="^(rooms|extras|all)$")
+    description: Optional[str] = None
+
+
+class OnboardingStaff(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = "front_desk"
+
+
+class OnboardingSaveRequest(BaseModel):
+    hotel_name: Optional[str] = None
+    city: Optional[str] = None
+    currency: Optional[str] = "INR"
+    gstin: Optional[str] = None
+    room_types: Optional[List[OnboardingRoomType]] = None
+    rooms: Optional[List[OnboardingRoom]] = None
+    rate_plans: Optional[List[OnboardingRatePlan]] = None
+    taxes: Optional[List[OnboardingTaxRate]] = None
+    staff: Optional[OnboardingStaff] = None
+
+
 TokenResponse.model_rebuild()
 
 

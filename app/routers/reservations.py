@@ -819,7 +819,7 @@ def check_in_guest(
                 )
                 db.add(folio_tax)
 
-    # Ensure advance deposit is properly reflected as a Payment on the primary folio without double-deducting
+    # Ensure advance deposit is properly reflected as a Payment and negative FolioItem on the primary folio
     if res.deposit_paid and res.deposit_paid > 0:
         existing_deposit_payment = (
             db.query(Payment)
@@ -839,6 +839,25 @@ def check_in_guest(
                 is_refund=False,
             )
             db.add(dep_payment)
+
+        existing_deposit_item = (
+            db.query(FolioItem)
+            .filter(FolioItem.reservation_id == res.id, FolioItem.category == "deposit_applied")
+            .first()
+        )
+        if not existing_deposit_item:
+            dep_folio_item = FolioItem(
+                organization_id=res.organization_id,
+                reservation_id=res.id,
+                folio_id=primary_folio.id,
+                date=res.check_in_date,
+                description="Deposit Applied: Advance payment",
+                category="deposit_applied",
+                amount=-Decimal(str(res.deposit_paid)),
+                subtotal=-Decimal(str(res.deposit_paid)),
+                tax_total=Decimal("0.00"),
+            )
+            db.add(dep_folio_item)
 
     # Log activity
     log = ActivityLog(

@@ -139,8 +139,8 @@
     .item-pill-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 12px;
     }
     .pill-card {
       border: 1px solid var(--border);
@@ -153,6 +153,142 @@
     }
     .pill-title { font-weight: 600; font-size: 14px; }
     .pill-meta { font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono); }
+
+    /* Editable Onboarding Cards */
+    .editable-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      background: var(--surface-alt);
+      transition: all 0.15s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .editable-card:hover {
+      border-color: var(--border-strong);
+      background: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-input-title {
+      font-weight: 600;
+      font-size: 14px;
+      padding: 6px 10px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      flex: 1;
+    }
+    .card-input-sm {
+      font-size: 13px;
+      padding: 6px 8px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+    }
+    .card-delete-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #FFFFFF;
+      color: #9CA3AF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .card-delete-btn:hover {
+      background: #FEE2E2;
+      color: #DC2626;
+      border-color: #FCA5A5;
+    }
+    .add-item-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px dashed var(--border-strong);
+      border-radius: 6px;
+      background: #FFFFFF;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+    .add-item-btn:hover {
+      background: var(--surface-alt);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-reset {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .btn-reset:hover {
+      color: var(--text);
+    }
+    .input-addon {
+      display: flex;
+      align-items: center;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .input-addon span {
+      padding: 6px 8px;
+      background: var(--surface-alt);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-right: 1px solid var(--border);
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .input-addon input {
+      border: none !important;
+      box-shadow: none !important;
+      padding: 6px 8px;
+      font-size: 13px;
+      background: transparent;
+      outline: none;
+      width: 100%;
+    }
+    .input-addon .suffix {
+      border-right: none;
+      border-left: 1px solid var(--border);
+      font-weight: 500;
+    }
+    @media (max-width: 640px) {
+      .item-pill-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
     .actions-bar {
       display: flex;
@@ -291,37 +427,15 @@
     <!-- Step 2: Room Types -->
     <div class="card" id="step-2" style="display: none;">
       <h2>2. Room Types & Base Pricing</h2>
-      <p class="desc">We've pre-seeded realistic room categories for your property. You can adjust the base nightly rates.</p>
-      <div class="item-pill-grid">
-        <div class="pill-card">
-          <div>
-            <div class="pill-title">Deluxe King</div>
-            <div class="pill-meta">Max 2 Guests • Standard King Bed</div>
-          </div>
-          <div class="pill-meta">₹7,500/night</div>
-        </div>
-        <div class="pill-card">
-          <div>
-            <div class="pill-title">Executive Heritage Suite</div>
-            <div class="pill-meta">Max 4 Guests • Living Room + Balcony</div>
-          </div>
-          <div class="pill-meta">₹16,500/night</div>
-        </div>
-        <div class="pill-card">
-          <div>
-            <div class="pill-title">Standard Double</div>
-            <div class="pill-meta">Max 2 Guests • Courtyard View</div>
-          </div>
-          <div class="pill-meta">₹5,000/night</div>
-        </div>
-        <div class="pill-card">
-          <div>
-            <div class="pill-title">Presidential Penthouse</div>
-            <div class="pill-meta">Max 6 Guests • Private Jacuzzi</div>
-          </div>
-          <div class="pill-meta">₹35,000/night</div>
-        </div>
+      <p class="desc">We've pre-seeded realistic room categories for your property. You can edit names, rates, and occupancy, or add new categories.</p>
+      
+      <div class="item-pill-grid" id="room-types-grid"></div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <button type="button" class="add-item-btn" onclick="addRoomType()">+ Add Room Category</button>
+        <button type="button" class="btn-reset" onclick="resetRoomTypes()">Reset Defaults</button>
       </div>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="nextStep(1)">&larr; Back</button>
         <button class="btn btn-primary" onclick="nextStep(3)">Continue to Rooms &rarr;</button>
@@ -331,15 +445,15 @@
     <!-- Step 3: Room Inventory -->
     <div class="card" id="step-3" style="display: none;">
       <h2>3. Room Numbers & Floors</h2>
-      <p class="desc">10 rooms pre-configured across Floors 1, 2, and 3. Ready for immediate live operations.</p>
-      <div class="item-pill-grid">
-        <div class="pill-card"><div><strong>Room 101</strong> (Floor 1)</div><span class="pill-meta">Deluxe King</span></div>
-        <div class="pill-card"><div><strong>Room 102</strong> (Floor 1)</div><span class="pill-meta">Deluxe King</span></div>
-        <div class="pill-card"><div><strong>Room 201</strong> (Floor 2)</div><span class="pill-meta">Deluxe King</span></div>
-        <div class="pill-card"><div><strong>Room 202</strong> (Floor 2)</div><span class="pill-meta">Deluxe King</span></div>
-        <div class="pill-card"><div><strong>Room 301</strong> (Floor 3)</div><span class="pill-meta">Executive Suite</span></div>
-        <div class="pill-card"><div><strong>Room 302</strong> (Floor 3)</div><span class="pill-meta">Executive Suite</span></div>
+      <p class="desc">Configure your room numbers, assigned floors, and category types. Ready for immediate live operations.</p>
+      
+      <div class="item-pill-grid" id="rooms-grid"></div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <button type="button" class="add-item-btn" onclick="addRoom()">+ Add Room</button>
+        <button type="button" class="btn-reset" onclick="resetRooms()">Reset Defaults</button>
       </div>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="nextStep(2)">&larr; Back</button>
         <button class="btn btn-primary" onclick="nextStep(4)">Continue to Rate Plans &rarr;</button>
@@ -349,13 +463,15 @@
     <!-- Step 4: Rate Plans -->
     <div class="card" id="step-4" style="display: none;">
       <h2>4. Dynamic Rate Plans</h2>
-      <p class="desc">Pre-configured rate plans automatically applied during reservation bookings.</p>
-      <div class="item-pill-grid">
-        <div class="pill-card"><div><strong>FLEX — Flexible Rate</strong></div><span class="pill-meta">Base Rate (Refundable)</span></div>
-        <div class="pill-card"><div><strong>NR — Non-Refundable</strong></div><span class="pill-meta">-10% Off Base</span></div>
-        <div class="pill-card"><div><strong>BB — Bed & Breakfast</strong></div><span class="pill-meta">+₹500 / night</span></div>
-        <div class="pill-card"><div><strong>LONG — Long Stay (7+ Nts)</strong></div><span class="pill-meta">-15% Off Base</span></div>
+      <p class="desc">Pre-configured rate plans automatically applied during reservation bookings. Adjust codes, percentages, or add plans.</p>
+      
+      <div class="item-pill-grid" id="rate-plans-grid"></div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <button type="button" class="add-item-btn" onclick="addRatePlan()">+ Add Rate Plan</button>
+        <button type="button" class="btn-reset" onclick="resetRatePlans()">Reset Defaults</button>
       </div>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="nextStep(3)">&larr; Back</button>
         <button class="btn btn-primary" onclick="nextStep(5)">Continue to Taxes &rarr;</button>
@@ -365,17 +481,15 @@
     <!-- Step 5: Taxes -->
     <div class="card" id="step-5" style="display: none;">
       <h2>5. Hospitality GST Tax Rules</h2>
-      <p class="desc">Indian GST tax slabs are pre-configured in accordance with GST Council hospitality rules.</p>
-      <div class="item-pill-grid">
-        <div class="pill-card">
-          <div><strong>Standard Room GST (12%)</strong><div style="font-size: 11px; color: var(--text-secondary);">6% CGST + 6% SGST</div></div>
-          <span class="pill-meta">Tariffs &le; ₹7,500</span>
-        </div>
-        <div class="pill-card">
-          <div><strong>Luxury Suite GST (18%)</strong><div style="font-size: 11px; color: var(--text-secondary);">9% CGST + 9% SGST</div></div>
-          <span class="pill-meta">Tariffs &gt; ₹7,500</span>
-        </div>
+      <p class="desc">Indian GST tax slabs are pre-configured in accordance with GST Council hospitality rules. You can adjust rates or add rules.</p>
+      
+      <div class="item-pill-grid" id="taxes-grid"></div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <button type="button" class="add-item-btn" onclick="addTax()">+ Add Tax Rule</button>
+        <button type="button" class="btn-reset" onclick="resetTaxes()">Reset Defaults</button>
       </div>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="nextStep(4)">&larr; Back</button>
         <button class="btn btn-primary" onclick="nextStep(6)">Continue to Team &rarr;</button>
@@ -425,7 +539,7 @@
 
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="nextStep(6)">&larr; Back</button>
-        <button class="btn btn-primary" style="padding: 12px 28px; font-size: 15px;" onclick="finishWizard()">Launch CheckinOS PMS &rarr;</button>
+        <button class="btn btn-primary" id="btn-finish" style="padding: 12px 28px; font-size: 15px;" onclick="finishWizard()">Launch CheckinOS PMS &rarr;</button>
       </div>
     </div>
 
@@ -438,46 +552,410 @@
   <script>
     let currentStep = 1;
 
+    // Default configuration matching onboarding screenshots
+    const DEFAULT_DATA = {
+      roomTypes: [
+        { name: 'Deluxe King', base_rate: 7500, max_occupancy: 2, description: 'Standard King Bed' },
+        { name: 'Executive Heritage Suite', base_rate: 16500, max_occupancy: 4, description: 'Living Room + Balcony' },
+        { name: 'Standard Double', base_rate: 5000, max_occupancy: 2, description: 'Courtyard View' },
+        { name: 'Presidential Penthouse', base_rate: 35000, max_occupancy: 6, description: 'Private Jacuzzi' }
+      ],
+      rooms: [
+        { number: '101', floor: 1, room_type_name: 'Deluxe King' },
+        { number: '102', floor: 1, room_type_name: 'Deluxe King' },
+        { number: '201', floor: 2, room_type_name: 'Deluxe King' },
+        { number: '202', floor: 2, room_type_name: 'Deluxe King' },
+        { number: '301', floor: 3, room_type_name: 'Executive Heritage Suite' },
+        { number: '302', floor: 3, room_type_name: 'Executive Heritage Suite' }
+      ],
+      ratePlans: [
+        { code: 'FLEX', name: 'Flexible Rate', modifier_type: 'percent', modifier_value: 0, description: 'Base Rate (Refundable)', refundable: true },
+        { code: 'NR', name: 'Non-Refundable', modifier_type: 'percent', modifier_value: -10, description: '-10% Off Base', refundable: false },
+        { code: 'BB', name: 'Bed & Breakfast', modifier_type: 'absolute', modifier_value: 500, description: '+₹500 / night', refundable: true },
+        { code: 'LONG', name: 'Long Stay (7+ Nts)', modifier_type: 'percent', modifier_value: -15, description: '-15% Off Base', refundable: true }
+      ],
+      taxes: [
+        { name: 'Standard Room GST (12%)', rate: 12, applies_to: 'rooms', description: 'Tariffs ≤ ₹7,500 (6% CGST + 6% SGST)' },
+        { name: 'Luxury Suite GST (18%)', rate: 18, applies_to: 'rooms', description: 'Tariffs > ₹7,500 (9% CGST + 9% SGST)' }
+      ]
+    };
+
+    let wizardData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
     function goToStep(step) {
+      if (step === 3) {
+        // Refresh rooms whenever moving to step 3 so category dropdowns match step 2 room types
+        renderRooms();
+      }
       document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
       document.getElementById(`step-${step}`).style.display = 'block';
 
       for (let i = 1; i <= 7; i++) {
         const item = document.getElementById(`st-${i}`);
-        item.classList.remove('active', 'done');
-        if (i < step) item.classList.add('done');
-        else if (i === step) item.classList.add('active');
+        if (item) {
+          item.classList.remove('active', 'done');
+          if (i < step) item.classList.add('done');
+          else if (i === step) item.classList.add('active');
+        }
       }
       currentStep = step;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function nextStep(step) {
       goToStep(step);
     }
 
+    // --- STEP 2: ROOM TYPES ---
+    function renderRoomTypes() {
+      const container = document.getElementById('room-types-grid');
+      if (!container) return;
+      container.innerHTML = wizardData.roomTypes.map((rt, idx) => `
+        <div class="editable-card" data-idx="${idx}">
+          <div class="card-top-row">
+            <input type="text" class="card-input-title" value="${escapeHtml(rt.name)}" placeholder="Category Name" oninput="updateRoomType(${idx}, 'name', this.value)" />
+            <button type="button" class="card-delete-btn" onclick="removeRoomType(${idx})" title="Delete Room Type">&times;</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="input-addon">
+              <span>₹</span>
+              <input type="number" min="0" step="100" value="${rt.base_rate}" oninput="updateRoomType(${idx}, 'base_rate', this.value)" />
+              <span class="suffix">/nt</span>
+            </div>
+            <div class="input-addon">
+              <span>Max</span>
+              <input type="number" min="1" max="20" value="${rt.max_occupancy}" oninput="updateRoomType(${idx}, 'max_occupancy', this.value)" />
+              <span class="suffix">Guests</span>
+            </div>
+          </div>
+          <input type="text" class="card-input-sm" value="${escapeHtml(rt.description || '')}" placeholder="Bed / view description" oninput="updateRoomType(${idx}, 'description', this.value)" />
+        </div>
+      `).join('');
+    }
+
+    function updateRoomType(idx, field, val) {
+      if (!wizardData.roomTypes[idx]) return;
+      if (field === 'base_rate' || field === 'max_occupancy') {
+        wizardData.roomTypes[idx][field] = Number(val) || 0;
+      } else {
+        wizardData.roomTypes[idx][field] = val;
+      }
+    }
+
+    function addRoomType() {
+      wizardData.roomTypes.push({
+        name: `Superior Room ${wizardData.roomTypes.length + 1}`,
+        base_rate: 8500,
+        max_occupancy: 2,
+        description: 'King Bed • Premium City View'
+      });
+      renderRoomTypes();
+    }
+
+    function removeRoomType(idx) {
+      if (wizardData.roomTypes.length <= 1) {
+        alert('You must have at least one room category.');
+        return;
+      }
+      wizardData.roomTypes.splice(idx, 1);
+      renderRoomTypes();
+    }
+
+    function resetRoomTypes() {
+      wizardData.roomTypes = JSON.parse(JSON.stringify(DEFAULT_DATA.roomTypes));
+      renderRoomTypes();
+    }
+
+    // --- STEP 3: ROOMS ---
+    function renderRooms() {
+      const container = document.getElementById('rooms-grid');
+      if (!container) return;
+
+      container.innerHTML = wizardData.rooms.map((r, idx) => `
+        <div class="editable-card" data-idx="${idx}">
+          <div class="card-top-row">
+            <div class="input-addon" style="width: 125px;">
+              <span>Room</span>
+              <input type="text" value="${escapeHtml(r.number)}" placeholder="101" oninput="updateRoom(${idx}, 'number', this.value)" />
+            </div>
+            <select class="card-input-sm" style="width: 110px;" onchange="updateRoom(${idx}, 'floor', this.value)">
+              ${[1, 2, 3, 4, 5, 6, 7, 8].map(f => `<option value="${f}" ${Number(r.floor) === f ? 'selected' : ''}>Floor ${f}</option>`).join('')}
+            </select>
+            <button type="button" class="card-delete-btn" onclick="removeRoom(${idx})" title="Delete Room">&times;</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin: 0; min-width: 55px;">Category:</label>
+            <select class="card-input-sm" style="flex: 1;" onchange="updateRoom(${idx}, 'room_type_name', this.value)">
+              ${wizardData.roomTypes.map(rt => `<option value="${escapeHtml(rt.name)}" ${rt.name.toLowerCase() === (r.room_type_name || '').toLowerCase() ? 'selected' : ''}>${escapeHtml(rt.name)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateRoom(idx, field, val) {
+      if (!wizardData.rooms[idx]) return;
+      if (field === 'floor') {
+        wizardData.rooms[idx][field] = Number(val) || 1;
+      } else {
+        wizardData.rooms[idx][field] = val;
+      }
+    }
+
+    function addRoom() {
+      const lastRoom = wizardData.rooms[wizardData.rooms.length - 1];
+      let nextNum = '101';
+      let floor = 1;
+      if (lastRoom) {
+        floor = lastRoom.floor || 1;
+        const numVal = parseInt(lastRoom.number, 10);
+        nextNum = isNaN(numVal) ? `${lastRoom.number}B` : String(numVal + 1);
+      }
+      const defaultRtName = wizardData.roomTypes[0] ? wizardData.roomTypes[0].name : 'Deluxe King';
+      wizardData.rooms.push({
+        number: nextNum,
+        floor: floor,
+        room_type_name: defaultRtName
+      });
+      renderRooms();
+    }
+
+    function removeRoom(idx) {
+      if (wizardData.rooms.length <= 1) {
+        alert('You must have at least one room.');
+        return;
+      }
+      wizardData.rooms.splice(idx, 1);
+      renderRooms();
+    }
+
+    function resetRooms() {
+      wizardData.rooms = JSON.parse(JSON.stringify(DEFAULT_DATA.rooms));
+      renderRooms();
+    }
+
+    // --- STEP 4: RATE PLANS ---
+    function renderRatePlans() {
+      const container = document.getElementById('rate-plans-grid');
+      if (!container) return;
+      container.innerHTML = wizardData.ratePlans.map((rp, idx) => `
+        <div class="editable-card" data-idx="${idx}">
+          <div class="card-top-row">
+            <input type="text" class="card-input-sm" style="width: 75px; font-weight: 700; text-transform: uppercase;" value="${escapeHtml(rp.code)}" placeholder="CODE" oninput="updateRatePlan(${idx}, 'code', this.value)" />
+            <input type="text" class="card-input-title" value="${escapeHtml(rp.name)}" placeholder="Plan Name" oninput="updateRatePlan(${idx}, 'name', this.value)" />
+            <button type="button" class="card-delete-btn" onclick="removeRatePlan(${idx})" title="Delete Rate Plan">&times;</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 140px 1fr; gap: 8px;">
+            <select class="card-input-sm" onchange="updateRatePlan(${idx}, 'modifier_type', this.value)">
+              <option value="percent" ${rp.modifier_type === 'percent' ? 'selected' : ''}>% Modifier</option>
+              <option value="absolute" ${rp.modifier_type === 'absolute' ? 'selected' : ''}>₹ Fixed Amount</option>
+            </select>
+            <div class="input-addon">
+              <span>Value</span>
+              <input type="number" step="1" value="${rp.modifier_value}" oninput="updateRatePlan(${idx}, 'modifier_value', this.value)" />
+            </div>
+          </div>
+          <input type="text" class="card-input-sm" value="${escapeHtml(rp.description || '')}" placeholder="Policy description / notes" oninput="updateRatePlan(${idx}, 'description', this.value)" />
+        </div>
+      `).join('');
+    }
+
+    function updateRatePlan(idx, field, val) {
+      if (!wizardData.ratePlans[idx]) return;
+      if (field === 'modifier_value') {
+        wizardData.ratePlans[idx][field] = Number(val) || 0;
+      } else {
+        wizardData.ratePlans[idx][field] = val;
+      }
+    }
+
+    function addRatePlan() {
+      wizardData.ratePlans.push({
+        code: `PROMO${wizardData.ratePlans.length + 1}`,
+        name: 'Special Promotion Rate',
+        modifier_type: 'percent',
+        modifier_value: -5,
+        description: '5% Early Bird Discount',
+        refundable: true
+      });
+      renderRatePlans();
+    }
+
+    function removeRatePlan(idx) {
+      if (wizardData.ratePlans.length <= 1) {
+        alert('You must have at least one rate plan.');
+        return;
+      }
+      wizardData.ratePlans.splice(idx, 1);
+      renderRatePlans();
+    }
+
+    function resetRatePlans() {
+      wizardData.ratePlans = JSON.parse(JSON.stringify(DEFAULT_DATA.ratePlans));
+      renderRatePlans();
+    }
+
+    // --- STEP 5: TAXES ---
+    function renderTaxes() {
+      const container = document.getElementById('taxes-grid');
+      if (!container) return;
+      container.innerHTML = wizardData.taxes.map((t, idx) => `
+        <div class="editable-card" data-idx="${idx}">
+          <div class="card-top-row">
+            <input type="text" class="card-input-title" value="${escapeHtml(t.name)}" placeholder="Tax Rule Name" oninput="updateTax(${idx}, 'name', this.value)" />
+            <div class="input-addon" style="width: 105px;">
+              <input type="number" step="0.5" min="0" max="100" value="${t.rate}" oninput="updateTax(${idx}, 'rate', this.value)" />
+              <span class="suffix">%</span>
+            </div>
+            <button type="button" class="card-delete-btn" onclick="removeTax(${idx})" title="Delete Tax Rule">&times;</button>
+          </div>
+          <input type="text" class="card-input-sm" value="${escapeHtml(t.description || '')}" placeholder="CGST + SGST slab rules" oninput="updateTax(${idx}, 'description', this.value)" />
+        </div>
+      `).join('');
+    }
+
+    function updateTax(idx, field, val) {
+      if (!wizardData.taxes[idx]) return;
+      if (field === 'rate') {
+        wizardData.taxes[idx][field] = Number(val) || 0;
+      } else {
+        wizardData.taxes[idx][field] = val;
+      }
+    }
+
+    function addTax() {
+      wizardData.taxes.push({
+        name: 'Custom Service Tax',
+        rate: 5,
+        applies_to: 'rooms',
+        description: '5% Municipal Hospitality Levy'
+      });
+      renderTaxes();
+    }
+
+    function removeTax(idx) {
+      if (wizardData.taxes.length <= 1) {
+        alert('You must keep at least one tax rule.');
+        return;
+      }
+      wizardData.taxes.splice(idx, 1);
+      renderTaxes();
+    }
+
+    function resetTaxes() {
+      wizardData.taxes = JSON.parse(JSON.stringify(DEFAULT_DATA.taxes));
+      renderTaxes();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
     async function finishWizard() {
+      const btn = document.getElementById('btn-finish');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = 'Saving Your Custom Setup... ⏳';
+      }
+
       const token = localStorage.getItem('access_token');
+      const payload = {
+        hotel_name: document.getElementById('wiz_hotel_name')?.value || 'The Heritage Grand Palace',
+        city: document.getElementById('wiz_city')?.value || 'Jaipur, Rajasthan',
+        currency: document.getElementById('wiz_currency')?.value || 'INR',
+        gstin: document.getElementById('wiz_gstin')?.value || '',
+        room_types: wizardData.roomTypes,
+        rooms: wizardData.rooms,
+        rate_plans: wizardData.ratePlans,
+        taxes: wizardData.taxes,
+        staff: {
+          full_name: document.getElementById('wiz_staff_name')?.value || '',
+          email: document.getElementById('wiz_staff_email')?.value || '',
+          role: document.getElementById('wiz_staff_role')?.value || 'front_desk'
+        }
+      };
+
       if (token) {
         try {
-          await fetch('/api/user/complete-tour', {
+          const res = await fetch('/api/onboarding/save', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify(payload)
           });
+          if (!res.ok) {
+            console.warn('Save failed with status:', res.status);
+          }
         } catch (e) {
-          console.warn('Tour completion ping failed:', e);
+          console.warn('Onboarding save error:', e);
         }
       }
+
       window.location.href = '/app';
     }
 
-    // Auto-populate hotel name from localStorage
-    const savedName = localStorage.getItem('org_name');
-    if (savedName) {
-      document.getElementById('wiz_hotel_name').value = savedName;
+    async function loadInitialData() {
+      // 1. Check local storage hotel name
+      const savedName = localStorage.getItem('org_name');
+      if (savedName) {
+        const el = document.getElementById('wiz_hotel_name');
+        if (el) el.value = savedName;
+      }
+
+      // 2. Fetch from DB if user is logged in
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const res = await fetch('/api/onboarding/data', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.hotel_name && document.getElementById('wiz_hotel_name')) {
+              document.getElementById('wiz_hotel_name').value = data.hotel_name;
+            }
+            if (data.city && document.getElementById('wiz_city')) {
+              document.getElementById('wiz_city').value = data.city;
+            }
+            if (data.currency && document.getElementById('wiz_currency')) {
+              document.getElementById('wiz_currency').value = data.currency;
+            }
+            if (data.gstin && document.getElementById('wiz_gstin')) {
+              document.getElementById('wiz_gstin').value = data.gstin;
+            }
+            if (data.room_types && data.room_types.length > 0) {
+              wizardData.roomTypes = data.room_types;
+            }
+            if (data.rooms && data.rooms.length > 0) {
+              wizardData.rooms = data.rooms;
+            }
+            if (data.rate_plans && data.rate_plans.length > 0) {
+              wizardData.ratePlans = data.rate_plans;
+            }
+            if (data.taxes && data.taxes.length > 0) {
+              wizardData.taxes = data.taxes;
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load initial onboarding data, using defaults:', e);
+        }
+      }
+
+      // 3. Render all steps
+      renderRoomTypes();
+      renderRooms();
+      renderRatePlans();
+      renderTaxes();
     }
+
+    document.addEventListener('DOMContentLoaded', loadInitialData);
   </script>
 </body>
 </html>
