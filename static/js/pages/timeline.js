@@ -21,17 +21,19 @@ window.Pages.Timeline = {
       <div style="display:flex; flex-direction:column; gap:16px;">
         <!-- Top Toolbar -->
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <button class="btn btn-secondary btn-sm" id="tl-prev-btn">
-              <svg style="width:14px; height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
-              <span>Prev 30 Days</span>
-            </button>
-            <button class="btn btn-secondary btn-sm" id="tl-today-btn">Today</button>
-            <button class="btn btn-secondary btn-sm" id="tl-next-btn">
-              <span>Next 30 Days</span>
-              <svg style="width:14px; height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
-            </button>
-            <span id="tl-range-label" style="font-size:13px; font-weight:600; color:#374151; margin-left:8px;"></span>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <div style="display:inline-flex; align-items:center; gap:6px; flex-shrink:0;">
+              <button class="btn btn-secondary date-nav-btn" id="tl-prev-btn" title="Previous 30 Days">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+                <span>Prev 30 Days</span>
+              </button>
+              <button class="btn btn-secondary date-nav-btn" id="tl-today-btn" title="Jump to Today">Today</button>
+              <button class="btn btn-secondary date-nav-btn" id="tl-next-btn" title="Next 30 Days">
+                <span>Next 30 Days</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+              </button>
+            </div>
+            <span id="tl-range-label" style="font-size:13px; font-weight:600; color:#374151; margin-left:4px; white-space:nowrap;"></span>
           </div>
 
           <div style="display:flex; align-items:center; gap:12px;">

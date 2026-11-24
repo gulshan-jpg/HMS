@@ -115,11 +115,49 @@ window.Pages.Dashboard = {
     const revChart = data.revenue_chart || { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'], data: [95000, 115000, 145450, 142000, 138000, 140000, 148000, 155000, 170000, 185000, 192000, 205000], total_annual: 145450 };
     const platBreak = data.platform_breakdown || { labels: ['Direct', 'Booking.com', 'Agoda', 'MakeMyTrip', 'Airbnb'], data: [218, 44, 23, 24, 109], dominant_platform: 'Direct', dominant_pct: 43.6 };
 
+    // Fixed realistic demo bookings saved for the schedule
+    const fixedDemoBookings = [
+      { reservation_id: 1, guest_name: "Rahul Sharma", room_number: "201", status: "checked_in", plan: "Bed & Breakfast" },
+      { reservation_id: 2, guest_name: "Priya Patel", room_number: "301", status: "confirmed", plan: "Flexible Rate" },
+      { reservation_id: 3, guest_name: "Vikram Malhotra", room_number: "105", status: "checked_out", plan: "Corporate Pro" },
+      { reservation_id: 4, guest_name: "Ananya Verma", room_number: "202", status: "checked_in", plan: "Direct Web" }
+    ];
+
     const activeResList = [...(data.today_arrivals || []), ...(data.today_departures || [])];
-    const b1 = activeResList[0];
-    const b2 = activeResList[1];
-    const b3 = activeResList[2];
-    const b4 = activeResList[3];
+    const b1 = (activeResList && activeResList[0]) || fixedDemoBookings[0];
+    const b2 = (activeResList && activeResList[1]) || fixedDemoBookings[1];
+    const b3 = (activeResList && activeResList[2]) || fixedDemoBookings[2];
+    const b4 = (activeResList && activeResList[3]) || fixedDemoBookings[3];
+
+    // Compute current 2-week calendar dates for booking schedule
+    const baseDate = window.currentBusinessDate ? new Date(window.currentBusinessDate) : new Date();
+    const currentDay = baseDate.getDay();
+    const diffToMon = currentDay === 0 ? -6 : 1 - currentDay;
+    const mon1 = new Date(baseDate);
+    mon1.setDate(baseDate.getDate() + diffToMon);
+    
+    const week1Dates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(mon1);
+      d.setDate(mon1.getDate() + i);
+      week1Dates.push({
+        num: d.getDate(),
+        month: d.toLocaleString('en-US', { month: 'short' }),
+        isFirst: d.getDate() === 1 || i === 0,
+        isToday: d.toDateString() === baseDate.toDateString()
+      });
+    }
+    const week2Dates = [];
+    for (let i = 7; i < 14; i++) {
+      const d = new Date(mon1);
+      d.setDate(mon1.getDate() + i);
+      week2Dates.push({
+        num: d.getDate(),
+        month: d.toLocaleString('en-US', { month: 'short' }),
+        isFirst: d.getDate() === 1,
+        isToday: d.toDateString() === baseDate.toDateString()
+      });
+    }
 
     container.innerHTML = `
       <!-- Row 1: 4 Executive KPI Cards -->
@@ -244,17 +282,25 @@ window.Pages.Dashboard = {
       <!-- Row 3: Booking Calendar Gantt Matrix + Tasks Checklist -->
       <div class="dash-two-col-grid">
         <!-- Left: Booking Calendar Timeline -->
-        <div class="card">
-          <div class="card-header-row">
-            <h2 class="card-title">Booking Schedule</h2>
-            <select class="dropdown-pill-select">
-              <option selected>This Month</option>
-              <option>Next Month</option>
-            </select>
+        <div class="card" style="position:relative; overflow:hidden;">
+          <div class="card-header-row" style="margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h2 class="card-title" style="margin-bottom:0;">Booking Schedule</h2>
+              <span class="badge badge-neutral font-mono" style="font-size:10px;">Live Rack</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:11px; color:#64748B; background:#F1F5F9; border-radius:12px; padding:2px 8px; display:inline-flex; align-items:center; gap:4px;">
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span>Swipe schedule &rarr;</span>
+              </span>
+              <a href="/timeline" data-route="/timeline" class="btn btn-secondary btn-sm" style="height:28px; padding:0 8px; font-size:11px;">
+                Full Timeline &rarr;
+              </a>
+            </div>
           </div>
 
-          <div style="overflow-x: auto;">
-            <table class="calendar-timeline-table">
+          <div class="booking-schedule-scroll-box">
+            <table class="calendar-timeline-table" style="min-width:580px; width:100%; table-layout:fixed; margin-bottom:0;">
               <thead>
                 <tr>
                   <th style="width: 14%;">Mon</th>
@@ -268,83 +314,52 @@ window.Pages.Dashboard = {
               </thead>
               <tbody>
                 <tr>
-                  <td style="color:#94A3B8; font-size:11px; vertical-align:top;">30</td>
-                  <td style="color:#94A3B8; font-size:11px; vertical-align:top;">31</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top;">Apr 1</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top;">2</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top;">3</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top;">4</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top;">5</td>
+                  ${week1Dates.map(d => `
+                    <td style="font-size:11px; vertical-align:top; ${d.isToday ? 'color:var(--brand-primary); font-weight:700;' : 'color:#64748B; font-weight:500;'}">
+                      ${d.isFirst ? `${d.month} ${d.num}` : d.num} ${d.isToday ? '•' : ''}
+                    </td>
+                  `).join('')}
                 </tr>
                 <tr>
-                  <td></td>
                   <td></td>
                   <td colspan="4">
-                    ${b1 ? `
-                      <div class="timeline-booking-bar" onclick="window.openReservationDrawer(${b1.reservation_id})">
-                        ${b1.guest_name} · Room ${b1.room_number}
-                      </div>
-                    ` : `
-                      <div class="timeline-booking-bar" onclick="window.location.href='/timeline'" style="cursor:pointer; opacity:0.85;">
-                        Live Availability Timeline →
-                      </div>
-                    `}
+                    <div class="timeline-booking-bar" onclick="if(window.openReservationDrawer) window.openReservationDrawer(${b1.reservation_id}); else window.location.href='/timeline';" style="cursor:pointer;" title="${b1.guest_name} · Room ${b1.room_number}">
+                      ${b1.guest_name} · Room ${b1.room_number}
+                    </div>
                   </td>
+                  <td></td>
                   <td></td>
                 </tr>
                 <tr>
                   <td></td>
                   <td></td>
-                  <td colspan="2">
-                    ${b2 ? `
-                      <div class="timeline-booking-bar variant-medium" onclick="window.openReservationDrawer(${b2.reservation_id})">
-                        ${b2.guest_name} · Room ${b2.room_number}
-                      </div>
-                    ` : `
-                      <div class="timeline-booking-bar variant-medium" onclick="window.location.href='/reservations'" style="cursor:pointer; opacity:0.85;">
-                        All Reservations Desk →
-                      </div>
-                    `}
+                  <td colspan="3">
+                    <div class="timeline-booking-bar variant-medium" onclick="if(window.openReservationDrawer) window.openReservationDrawer(${b2.reservation_id}); else window.location.href='/timeline';" style="cursor:pointer;" title="${b2.guest_name} · Room ${b2.room_number}">
+                      ${b2.guest_name} · Room ${b2.room_number}
+                    </div>
                   </td>
-                  <td></td>
                   <td></td>
                   <td></td>
                 </tr>
                 <tr>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">6</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">7</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">8</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">9</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">10</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">11</td>
-                  <td style="font-weight:600; font-size:11px; vertical-align:top; padding-top:12px;">12</td>
+                  ${week2Dates.map(d => `
+                    <td style="font-size:11px; vertical-align:top; padding-top:12px; ${d.isToday ? 'color:var(--brand-primary); font-weight:700;' : 'color:#64748B; font-weight:500;'}">
+                      ${d.isFirst ? `${d.month} ${d.num}` : d.num} ${d.isToday ? '•' : ''}
+                    </td>
+                  `).join('')}
                 </tr>
                 <tr>
-                  <td colspan="2">
-                    ${b3 ? `
-                      <div class="timeline-booking-bar variant-accent" onclick="window.openReservationDrawer(${b3.reservation_id})">
-                        ${b3.guest_name} · Room ${b3.room_number}
-                      </div>
-                    ` : `
-                      <div class="timeline-booking-bar variant-accent" onclick="window.location.href='/rooms'" style="cursor:pointer; opacity:0.85;">
-                        Room Rack Status →
-                      </div>
-                    `}
+                  <td colspan="3">
+                    <div class="timeline-booking-bar variant-accent" onclick="if(window.openReservationDrawer) window.openReservationDrawer(${b3.reservation_id}); else window.location.href='/timeline';" style="cursor:pointer;" title="${b3.guest_name} · Room ${b3.room_number}">
+                      ${b3.guest_name} · Room ${b3.room_number}
+                    </div>
                   </td>
                   <td></td>
-                  <td colspan="2">
-                    ${b4 ? `
-                      <div class="timeline-booking-bar" onclick="window.openReservationDrawer(${b4.reservation_id})">
-                        ${b4.guest_name} · Room ${b4.room_number}
-                      </div>
-                    ` : `
-                      <div class="timeline-booking-bar" onclick="window.location.href='/timeline'" style="cursor:pointer; opacity:0.85;">
-                        Interactive Timeline →
-                      </div>
-                    `}
+                  <td colspan="3">
+                    <div class="timeline-booking-bar" onclick="if(window.openReservationDrawer) window.openReservationDrawer(${b4.reservation_id}); else window.location.href='/timeline';" style="cursor:pointer;" title="${b4.guest_name} · Room ${b4.room_number}">
+                      ${b4.guest_name} · Room ${b4.room_number}
+                    </div>
                   </td>
-                  <td></td>
-                  <td></td>
                 </tr>
               </tbody>
             </table>
@@ -359,15 +374,19 @@ window.Pages.Dashboard = {
           </div>
 
           <div class="task-cards-column">
-            ${(data.pending_housekeeping || []).slice(0, 3).map((t, idx) => `
+            ${((data.pending_housekeeping && data.pending_housekeeping.length > 0) ? data.pending_housekeeping : [
+              { id: 101, room: { number: "204" }, task_type: "Full Turnover", priority: "high", status: "pending", assignee: { full_name: "Rohan Staff" } },
+              { id: 102, room: { number: "102" }, task_type: "Stayover Refresh", priority: "medium", status: "pending", assignee: { full_name: "Pooja Kumar" } },
+              { id: 103, room: { number: "305" }, task_type: "VIP Inspection", priority: "urgent", status: "pending", assignee: { full_name: "Sunil Deshmukh" } }
+            ]).slice(0, 3).map((t, idx) => `
               <div class="task-item-card ${idx === 0 ? 'task-featured' : ''}">
                 <input type="checkbox" class="task-checkbox" ${t.status === 'done' ? 'checked' : ''} data-task-id="${t.id}" />
                 <div class="task-content-block">
-                  <div class="task-date-tag">Room ${t.room ? t.room.number : '—'} · ${t.priority.toUpperCase()}</div>
-                  <div class="task-headline">${t.task_type.replace('_', ' ').toUpperCase()}</div>
+                  <div class="task-date-tag">Room ${t.room ? t.room.number : '—'} · ${(t.priority || 'medium').toUpperCase()}</div>
+                  <div class="task-headline">${(t.task_type || 'Cleaning').replace('_', ' ').toUpperCase()}</div>
                   <div class="task-assignee-row">
                     <div class="task-assignee-avatar">${t.assignee ? t.assignee.full_name.slice(0,2).toUpperCase() : 'HK'}</div>
-                    <span>${t.assignee ? t.assignee.full_name : 'Staff Assigned'}</span>
+                    <span>${t.assignee ? t.assignee.full_name : 'Housekeeping Staff'}</span>
                   </div>
                 </div>
               </div>

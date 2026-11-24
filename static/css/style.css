@@ -1172,6 +1172,10 @@ input, select, textarea {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
 .btn-primary {
@@ -1200,9 +1204,68 @@ input, select, textarea {
 }
 
 .btn-sm {
-  height: 28px;
-  padding: 0 10px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 12px;
   font-size: 12px;
+  white-space: nowrap !important;
+  line-height: 1;
+}
+
+.date-nav-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 12px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  gap: 6px !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--border) !important;
+  background-color: #FFFFFF !important;
+  color: var(--text) !important;
+}
+.date-nav-btn:hover {
+  background-color: #F8FAFC !important;
+  border-color: var(--border-strong) !important;
+}
+.date-nav-btn span {
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+}
+.date-nav-btn svg {
+  flex-shrink: 0 !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.booking-schedule-scroll-box {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  border: 1px solid #F1F5F9;
+  border-radius: 8px;
+  padding: 4px;
+}
+.booking-schedule-scroll-box::-webkit-scrollbar {
+  height: 6px;
+}
+.booking-schedule-scroll-box::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+.booking-schedule-scroll-box::-webkit-scrollbar-track {
+  background: #F8FAFC;
 }
 
 .btn-md {
