@@ -725,10 +725,13 @@ const store = {
           date: dateIso,
           rate: rate,
           available: avail,
+          available_count: avail,
           total: totalRoomsOfType,
           occupancy_pct: Math.round((occ / totalRoomsOfType) * 100),
-          min_stay: isWeekend ? 2 : 1,
+          min_stay: isWeekend ? 2 : null,
+          closed: false,
           stop_sell: false,
+          override_id: isWeekend ? 1 : null,
           is_override: isWeekend
         });
       }
@@ -738,6 +741,7 @@ const store = {
         name: rt.name,
         code: rt.code,
         base_rate: rt.base_rate,
+        room_count: totalRoomsOfType,
         days: daysArr
       };
     });
