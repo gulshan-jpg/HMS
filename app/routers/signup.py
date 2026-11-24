@@ -447,28 +447,30 @@ def seed_organization_demo_data(org: Organization, db: Session) -> None:
 
 
 def sync_postgres_sequences(db: Session) -> None:
-    """Synchronizes PostgreSQL auto-increment sequences with current max primary keys to prevent duplicate key violations."""
+    """Synchronizes PostgreSQL auto-increment sequences with current max primary keys in a single server-side block."""
     if db.bind and db.bind.dialect.name == "postgresql":
-        for tbl in ["organizations", "users", "user_org_memberships", "rooms", "room_types", "rate_plans", "tax_rates", "guests", "reservations", "folios", "folio_items", "payments", "housekeeping_tasks"]:
-            try:
-                db.execute(text(f"""
-                    DO $$
-                    DECLARE
-                        seq text;
-                        max_val bigint;
-                    BEGIN
-                        seq := pg_get_serial_sequence('{tbl}', 'id');
+        try:
+            db.execute(text("""
+                DO $$
+                DECLARE
+                    tbl text;
+                    seq text;
+                    max_val bigint;
+                BEGIN
+                    FOR tbl IN VALUES ('organizations'), ('users'), ('user_org_memberships'), ('rooms'), ('room_types'), ('rate_plans'), ('tax_rates'), ('guests'), ('reservations'), ('folios'), ('folio_items'), ('payments'), ('housekeeping_tasks') LOOP
+                        seq := pg_get_serial_sequence(tbl, 'id');
                         IF seq IS NOT NULL THEN
-                            EXECUTE 'SELECT COALESCE(MAX(id), 0) FROM ' || quote_ident('{tbl}') INTO max_val;
+                            EXECUTE 'SELECT COALESCE(MAX(id), 0) FROM ' || quote_ident(tbl) INTO max_val;
                             IF max_val > 0 THEN
                                 PERFORM setval(seq, max_val, true);
                             END IF;
                         END IF;
-                    END $$;
-                """))
-                db.commit()
-            except Exception:
-                db.rollback()
+                    END LOOP;
+                END $$;
+            """))
+            db.commit()
+        except Exception:
+            db.rollback()
 
 
 @router.post("/signup", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
