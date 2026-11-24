@@ -135,13 +135,15 @@ const state = {
     { id: 5, code: "CORP", name: "Corporate Business Pro", description: "Preferred corporate negotiated rate", multiplier: 0.88, is_active: true }
   ],
   cancellationPolicies: [
-    { id: 1, name: "Flexible (24h)", description: "Free cancellation up to 24 hours prior to arrival", free_cancel_days: 1, penalty_type: "first_night" },
-    { id: 2, name: "Moderate (3-Day)", description: "Free cancellation up to 3 days before arrival", free_cancel_days: 3, penalty_type: "first_night" },
-    { id: 3, name: "Strict Non-Refundable", description: "100% first night penalty applies immediately", free_cancel_days: 0, penalty_type: "first_night" }
+    { id: 1, name: "Flexible 24-Hour", description: "Free cancellation up to 24 hours prior to check-in. First night penalty thereafter.", free_cancel_days: 1, penalty_type: "first_night", penalty_value: 100, no_show_penalty: "first_night", no_show_value: 100, active: true, sort_order: 1 },
+    { id: 2, name: "Moderate 3-Day Window", description: "Free cancellation up to 3 days before arrival. First night penalty thereafter.", free_cancel_days: 3, penalty_type: "first_night", penalty_value: 100, no_show_penalty: "first_night", no_show_value: 100, active: true, sort_order: 2 },
+    { id: 3, name: "Non-Refundable Policy", description: "100% reservation charge applies upon cancellation at any time.", free_cancel_days: 0, penalty_type: "first_night", penalty_value: 100, no_show_penalty: "full_stay", no_show_value: 100, active: true, sort_order: 3 }
   ],
   taxes: [
-    { id: 1, name: "City Municipal Tax", rate: 3.00, fixed_amount: 0.00, applies_to: "rooms", type: "exclusive" },
-    { id: 2, name: "Tourism Development Levy", rate: 0.00, fixed_amount: 150.00, applies_to: "rooms", type: "exclusive" }
+    { id: 1, name: "Goods & Services Tax (GST 12%)", rate: 12.00, fixed_amount: 0.00, applies_to: "rooms", type: "exclusive", per: "stay", active: true, sort_order: 1 },
+    { id: 2, name: "Luxury Goods & Services Tax (GST 18%)", rate: 18.00, fixed_amount: 0.00, applies_to: "rooms", type: "exclusive", per: "stay", active: true, sort_order: 2 },
+    { id: 3, name: "City Municipal Tax", rate: 3.00, fixed_amount: 0.00, applies_to: "rooms", type: "exclusive", per: "stay", active: true, sort_order: 3 },
+    { id: 4, name: "Tourism Development Levy", rate: 0.00, fixed_amount: 150.00, applies_to: "rooms", type: "exclusive", per: "stay", active: true, sort_order: 4 }
   ],
   businessDate: {
     date: new Date().toISOString().slice(0, 10),
@@ -282,6 +284,76 @@ const state = {
       status: "processed",
       created_at: new Date().toISOString()
     }
+  ],
+  emailTemplates: [
+    { id: 1, key: "booking_confirmation", name: "Guest Booking Confirmation", subject: "Your reservation at {{hotel_name}} is confirmed (#{{confirmation_number}})", body_html: "Dear {{guest_name}},\n\nYour booking at {{hotel_name}} is confirmed for {{check_in_date}} to {{check_out_date}}.\nRoom: {{room_type}} (Room {{room_number}})\nTotal: ₹{{total_amount}}\n\nWe look forward to hosting you!", is_active: true },
+    { id: 2, key: "pre_arrival_reminder", name: "Pre-Arrival & Check-in Details", subject: "See you soon at {{hotel_name}}! Check-in details and travel directions", body_html: "Dear {{guest_name}},\n\nWe are preparing for your arrival on {{check_in_date}}. Check-in begins at 2:00 PM.\n\nPlease carry valid government photo ID.", is_active: true },
+    { id: 3, key: "checkout_invoice", name: "Departure Tax Invoice", subject: "Tax Invoice & Receipt for stay at {{hotel_name}}", body_html: "Dear {{guest_name}},\n\nThank you for choosing {{hotel_name}}. Please find attached your official GST Tax Invoice.\n\nTotal Paid: ₹{{total_paid}}", is_active: true }
+  ],
+  groups: [
+    {
+      id: 1,
+      hotel_id: 1,
+      name: "TCS Global Leadership Retreat 2026",
+      contact_name: "Deepak Sharma",
+      contact_phone: "+91 98200 11223",
+      contact_email: "deepak.s@tcs.com",
+      status: "confirmed",
+      billing_type: "master",
+      check_in_date: "2026-11-25",
+      check_out_date: "2026-11-28",
+      cutoff_date: "2026-11-24",
+      notes: "Corporate event. All room charges to Master Folio. Incidentals direct pay.",
+      room_blocks: [
+        { id: 1, group_id: 1, room_type_id: 1, room_type_name: "Standard Deluxe Queen", count: 4, rate: 4200, picked_up_count: 3, available_to_pick: 1 },
+        { id: 2, group_id: 1, room_type_id: 2, room_type_name: "Deluxe King", count: 2, rate: 6800, picked_up_count: 2, available_to_pick: 0 }
+      ],
+      total_charges: 115000,
+      total_paid: 60000,
+      balance: 55000
+    }
+  ],
+  auditLogs: [
+    { id: 1, event_type: "night_audit_completed", description: "System rolled business date forward to Nov 24, 2026. 14 room charges posted.", actor: "System Daemon", created_at: new Date(Date.now() - 3600000 * 24).toISOString() },
+    { id: 2, event_type: "rate_override_bulk", description: "Updated weekend rates for Deluxe King rooms (+20%).", actor: "Aditi Rao", created_at: new Date(Date.now() - 3600000 * 12).toISOString() },
+    { id: 3, event_type: "check_in", description: "Checked in reservation HTL-10821 (Rahul Sharma) into Room 201.", actor: "Rahul Verma", created_at: new Date(Date.now() - 3600000 * 4).toISOString() }
+  ],
+  backups: [
+    { id: 1, filename: "backup_hotel_20261123_full.sql.gz", size_bytes: 4280192, status: "completed", created_at: new Date(Date.now() - 86400000).toISOString() },
+    { id: 2, filename: "backup_hotel_20261124_automated.sql.gz", size_bytes: 4310844, status: "completed", created_at: new Date(Date.now() - 3600000 * 6).toISOString() }
+  ],
+  trash: {
+    reservations: [],
+    rooms: [],
+    guests: []
+  },
+  auditSnapshots: [
+    {
+      id: 1,
+      business_date: "2026-11-23",
+      occupancy_rate: 65.0,
+      adr: 6850.0,
+      revpar: 4452.5,
+      arrivals: 6,
+      departures: 4,
+      room_revenue: 91500.0,
+      total_revenue: 104250.0,
+      tax_collected: 12450.0,
+      created_at: new Date(Date.now() - 86400000).toISOString()
+    },
+    {
+      id: 2,
+      business_date: "2026-11-22",
+      occupancy_rate: 70.0,
+      adr: 7200.0,
+      revpar: 5040.0,
+      arrivals: 8,
+      departures: 5,
+      room_revenue: 100800.0,
+      total_revenue: 118400.0,
+      tax_collected: 14200.0,
+      created_at: new Date(Date.now() - 86400000 * 2).toISOString()
+    }
   ]
 };
 
@@ -294,6 +366,33 @@ const populateRooms = () => {
       room_type: rt || { id: 1, name: "Standard", code: "STD", base_rate: 4500, max_occupancy: 2 }
     };
   });
+};
+
+const populateReservation = (r) => {
+  const g = r.guest || state.guests.find(gst => gst.id === r.guest_id) || { first_name: "Rahul", last_name: "Sharma", phone: "+91 98201 23456" };
+  const rm = r.room || state.rooms.find(room => room.id === r.room_id) || state.rooms[0];
+  const rt = (rm && rm.room_type) || state.roomTypes.find(t => t.id === (rm ? rm.room_type_id : 1)) || state.roomTypes[0];
+  const dIn = new Date(r.check_in_date);
+  const dOut = new Date(r.check_out_date);
+  const nights = Math.max(1, Math.round((dOut - dIn) / 86400000));
+  const guestFullName = (g.full_name || `${g.first_name || ''} ${g.last_name || ''}`).trim();
+
+  return {
+    ...r,
+    nights: r.nights || nights,
+    balance: r.balance_due != null ? r.balance_due : ((r.total_charges || 0) - (r.total_paid || 0)),
+    guest: {
+      ...g,
+      full_name: guestFullName,
+    },
+    room: {
+      ...rm,
+      room_type: {
+        ...rt,
+        code: rt.code || rt.name.slice(0, 4).toUpperCase()
+      }
+    }
+  };
 };
 
 const store = {
@@ -312,6 +411,43 @@ const store = {
   findUserById: (id) => state.users.find(u => u.id === Number(id)),
 
   getRoomTypes: () => [...state.roomTypes],
+
+  getRoomById: (id) => {
+    const room = state.rooms.find(r => r.id === Number(id));
+    if (!room) return null;
+    const rt = state.roomTypes.find(t => t.id === room.room_type_id);
+    const activeRes = state.reservations.find(res => (res.room_id === room.id || (res.room && res.room.id === room.id)) && res.status === "checked_in");
+
+    return {
+      ...room,
+      room_type: rt || { id: 1, name: "Standard", code: "STD", base_rate: 4500, max_occupancy: 2 },
+      current_guest: activeRes && activeRes.guest ? `${activeRes.guest.first_name} ${activeRes.guest.last_name}` : null,
+      current_reservation_id: activeRes ? activeRes.id : null,
+      current_reservation_confirmation: activeRes ? activeRes.confirmation_number : null,
+      current_balance: activeRes ? (activeRes.balance_due != null ? activeRes.balance_due : 0) : null,
+      current_total_charges: activeRes ? (activeRes.total_charges != null ? activeRes.total_charges : 0) : null,
+      current_total_payments: activeRes ? (activeRes.total_paid != null ? activeRes.total_paid : 0) : null,
+      current_check_in_date: activeRes ? activeRes.check_in_date : null,
+      current_check_out_date: activeRes ? activeRes.check_out_date : null,
+    };
+  },
+
+  addRoom: (data) => {
+    const newId = state.rooms.length ? Math.max(...state.rooms.map(r => r.id)) + 1 : 1;
+    const newRoom = {
+      id: newId,
+      number: String(data.number || `${100 + newId}`),
+      floor: Number(data.floor) || 1,
+      room_type_id: Number(data.room_type_id) || 1,
+      status: data.status || "available",
+      notes: data.notes || ""
+    };
+    state.rooms.push(newRoom);
+    return {
+      ...newRoom,
+      room_type: state.roomTypes.find(t => t.id === newRoom.room_type_id)
+    };
+  },
 
   getRooms: (filters = {}) => {
     let list = populateRooms();
@@ -337,6 +473,113 @@ const store = {
   },
 
   getRatePlans: () => [...state.ratePlans],
+
+  getCancellationPolicies: (activeOnly = false) => {
+    let list = [...state.cancellationPolicies];
+    if (activeOnly) list = list.filter(p => p.active !== false);
+    return list;
+  },
+
+  getCancellationPolicyById: (id) => state.cancellationPolicies.find(p => p.id === Number(id)),
+
+  createCancellationPolicy: (data) => {
+    const newId = state.cancellationPolicies.length ? Math.max(...state.cancellationPolicies.map(p => p.id)) + 1 : 1;
+    const newPol = {
+      id: newId,
+      name: data.name || "Custom Policy",
+      description: data.description || "",
+      free_cancel_days: Number(data.free_cancel_days) || 0,
+      penalty_type: data.penalty_type || "first_night",
+      penalty_value: Number(data.penalty_value) || 100,
+      no_show_penalty: data.no_show_penalty || "first_night",
+      no_show_value: Number(data.no_show_value) || 100,
+      active: data.active !== false,
+      sort_order: state.cancellationPolicies.length + 1
+    };
+    state.cancellationPolicies.push(newPol);
+    return newPol;
+  },
+
+  updateCancellationPolicy: (id, data) => {
+    const p = state.cancellationPolicies.find(x => x.id === Number(id));
+    if (!p) return null;
+    Object.assign(p, data);
+    return p;
+  },
+
+  deleteCancellationPolicy: (id) => {
+    const idx = state.cancellationPolicies.findIndex(x => x.id === Number(id));
+    if (idx !== -1) {
+      state.cancellationPolicies.splice(idx, 1);
+      return true;
+    }
+    return false;
+  },
+
+  getTaxes: (activeOnly = false) => {
+    let list = [...state.taxes];
+    if (activeOnly) list = list.filter(t => t.active !== false);
+    return list;
+  },
+
+  getTaxById: (id) => state.taxes.find(t => t.id === Number(id)),
+
+  createTax: (data) => {
+    const newId = state.taxes.length ? Math.max(...state.taxes.map(t => t.id)) + 1 : 1;
+    const newTax = {
+      id: newId,
+      name: data.name || "Custom Tax",
+      rate: Number(data.rate) || 0,
+      fixed_amount: Number(data.fixed_amount) || 0,
+      applies_to: data.applies_to || "rooms",
+      type: data.type || "exclusive",
+      per: data.per || "stay",
+      active: data.active !== false,
+      sort_order: state.taxes.length + 1
+    };
+    state.taxes.push(newTax);
+    return newTax;
+  },
+
+  updateTax: (id, data) => {
+    const t = state.taxes.find(x => x.id === Number(id));
+    if (!t) return null;
+    Object.assign(t, data);
+    return t;
+  },
+
+  deleteTax: (id) => {
+    const idx = state.taxes.findIndex(x => x.id === Number(id));
+    if (idx !== -1) {
+      state.taxes.splice(idx, 1);
+      return true;
+    }
+    return false;
+  },
+
+  createUser: (data) => {
+    const newId = state.users.length ? Math.max(...state.users.map(u => u.id)) + 1 : 1;
+    const newUser = {
+      id: newId,
+      username: (data.username || `user${newId}`).trim(),
+      email: (data.email || `user${newId}@hotel.com`).trim().toLowerCase(),
+      full_name: (data.full_name || 'Staff Member').trim(),
+      role: data.role || "front_desk",
+      password_hash: bcrypt.hashSync(data.password || "staff123", 10),
+      is_active: true,
+      organization_id: 1
+    };
+    state.users.push(newUser);
+    return {
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      full_name: newUser.full_name,
+      role: newUser.role,
+      is_active: newUser.is_active,
+      organization_id: newUser.organization_id
+    };
+  },
 
   getBusinessDate: () => ({ ...state.businessDate }),
 
@@ -396,19 +639,22 @@ const store = {
   },
 
   getReservations: (search = '') => {
-    let list = [...state.reservations];
+    let list = state.reservations.map(populateReservation);
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(r => 
         (r.confirmation_number && r.confirmation_number.toLowerCase().includes(q)) ||
-        (r.guest && `${r.guest.first_name} ${r.guest.last_name}`.toLowerCase().includes(q)) ||
+        (r.guest && `${r.guest.first_name} ${r.guest.last_name} ${r.guest.full_name}`.toLowerCase().includes(q)) ||
         (r.room && String(r.room.number).includes(q))
       );
     }
     return list;
   },
 
-  getReservationById: (id) => state.reservations.find(r => r.id === Number(id)),
+  getReservationById: (id) => {
+    const r = state.reservations.find(res => res.id === Number(id));
+    return r ? populateReservation(r) : null;
+  },
 
   createWalkInReservation: (payload) => {
     // 1. Create or match guest
@@ -842,6 +1088,296 @@ const store = {
     });
 
     return newOtaItem;
+  },
+
+  getOrgUsage: () => {
+    const usedRooms = state.rooms.length;
+    const usedUsers = state.users.length;
+    const firstOfMonth = new Date();
+    firstOfMonth.setDate(1);
+    const firstIso = firstOfMonth.toISOString().slice(0, 10);
+    const resCount = state.reservations.filter(r => r.check_in_date >= firstIso).length || 12;
+
+    return {
+      rooms: {
+        used: usedRooms,
+        limit: 50
+      },
+      users: {
+        used: usedUsers,
+        limit: 10
+      },
+      reservations_this_month: resCount
+    };
+  },
+
+  getCancellationQuote: (resId) => {
+    const res = state.reservations.find(r => r.id === Number(resId));
+    if (!res) return null;
+    
+    const today = state.businessDate.date;
+    const checkIn = res.check_in_date;
+    const pol = state.cancellationPolicies.find(p => p.active) || state.cancellationPolicies[0];
+    const freeDays = pol ? pol.free_cancel_days : 1;
+    
+    const dIn = new Date(checkIn);
+    dIn.setDate(dIn.getDate() - freeDays);
+    const freeUntil = dIn.toISOString().slice(0, 10);
+    const canCancelFree = today <= freeUntil;
+    
+    const nightlyRate = res.nightly_rate || 4500;
+    const penalty = canCancelFree ? 0 : nightlyRate;
+    const depositPaid = res.total_paid || 0;
+    const refund = Math.max(0, depositPaid - penalty);
+
+    return {
+      reservation_id: res.id,
+      policy_name: pol ? pol.name : "Flexible 24h",
+      free_cancel_until: freeUntil,
+      can_cancel_free: canCancelFree,
+      penalty_amount: penalty,
+      deposit_paid: depositPaid,
+      refund_amount: refund,
+      reason: canCancelFree
+        ? `Cancelled on or before ${freeUntil} within the free window (${pol ? pol.name : 'Flexible'}). Full refund.`
+        : `Cancellation penalty of 1 night (₹${nightlyRate.toFixed(2)}) applied under '${pol ? pol.name : 'Policy'}'.`
+    };
+  },
+
+  getDepositStatus: (resId) => {
+    const res = state.reservations.find(r => r.id === Number(resId));
+    if (!res) return null;
+    const req = (res.nightly_rate || 4500);
+    const paid = res.total_paid || 0;
+    const bal = Math.max(0, req - paid);
+    return {
+      reservation_id: res.id,
+      deposit_required: req,
+      deposit_paid: paid,
+      deposit_due_at: res.check_in_date,
+      is_satisfied: paid >= req,
+      balance_due: bal
+    };
+  },
+
+  getFolioDetail: (resId) => {
+    const res = state.reservations.find(r => r.id === Number(resId));
+    if (!res) return null;
+    
+    let folio = state.folios.find(f => f.reservation_id === Number(resId));
+    if (!folio) {
+      const dIn = new Date(res.check_in_date);
+      const dOut = new Date(res.check_out_date);
+      const nights = Math.max(1, Math.round((dOut - dIn) / (86400000)));
+      const baseRoom = (res.total_charges || 9000) * 0.88;
+      const gstTax = (res.total_charges || 9000) * 0.12;
+
+      folio = {
+        id: state.folios.length + 1,
+        reservation_id: res.id,
+        name: "Master Folio",
+        balance: res.balance_due != null ? res.balance_due : 0,
+        status: "open",
+        items: [
+          { id: 1, date: res.check_in_date, description: `Room Charge (${nights} nights @ ₹${res.nightly_rate || 4500})`, category: "room", amount: baseRoom },
+          { id: 2, date: res.check_in_date, description: "Goods & Services Tax (GST 12%)", category: "tax", amount: gstTax }
+        ],
+        payments: res.total_paid > 0 ? [
+          { id: 1, date: res.check_in_date, amount: res.total_paid, method: "card", reference: `PAY-RES-${res.id}` }
+        ] : []
+      };
+      state.folios.push(folio);
+    }
+
+    const items = (folio.items || []).map(i => ({
+      id: i.id,
+      date: i.date || res.check_in_date,
+      description: i.description,
+      category: i.category || i.type || "room",
+      amount: Number(i.amount)
+    }));
+
+    const payments = (folio.payments || []).map(p => ({
+      id: p.id,
+      date: p.date || res.check_in_date,
+      amount: Number(p.amount),
+      method: p.method || "card",
+      reference: p.reference || "AUTH-PAY"
+    }));
+
+    const subtotal = items.filter(i => i.category !== 'tax').reduce((sum, i) => sum + i.amount, 0);
+    const tax_total = items.filter(i => i.category === 'tax').reduce((sum, i) => sum + i.amount, 0);
+    const total_amount = subtotal + tax_total;
+    const total_paid = payments.reduce((sum, p) => sum + p.amount, 0);
+    const balance_due = total_amount - total_paid;
+
+    const dIn = new Date(res.check_in_date);
+    const dOut = new Date(res.check_out_date);
+    const nights = Math.max(1, Math.round((dOut - dIn) / (86400000)));
+
+    return {
+      reservation_id: res.id,
+      confirmation_number: res.confirmation_number,
+      guest: res.guest || { first_name: "Guest", last_name: "", phone: "+91 99999 99999", email: "guest@example.com" },
+      room_number: res.room ? res.room.number : "101",
+      room_type: res.room && res.room.room_type ? res.room.room_type.name : "Standard Deluxe Queen",
+      check_in_date: res.check_in_date,
+      check_out_date: res.check_out_date,
+      nights: nights,
+      items,
+      payments,
+      subtotal,
+      tax_total,
+      total_amount,
+      total_paid,
+      balance_due
+    };
+  },
+
+  getNightAuditPreview: () => {
+    const checkedIn = state.reservations.filter(r => r.status === "checked_in");
+    const roomChargesCount = checkedIn.length;
+    const roomChargesTotal = checkedIn.reduce((sum, r) => sum + (Number(r.nightly_rate) || 4500), 0);
+    const today = state.businessDate.date;
+    const noShows = state.reservations.filter(r => r.status === "confirmed" && r.check_in_date <= today);
+    const noShowsPenalties = noShows.reduce((sum, r) => sum + (Number(r.nightly_rate) || 4500), 0);
+    const unresolvedDepartures = state.reservations.filter(r => r.status === "checked_in" && r.check_out_date <= today);
+
+    const nextDate = new Date(new Date(today).getTime() + 86400000).toISOString().slice(0, 10);
+
+    return {
+      business_date: today,
+      next_business_date: nextDate,
+      checked_in_reservations_count: checkedIn.length,
+      room_charges_to_post_count: roomChargesCount,
+      room_charges_estimated_total: roomChargesTotal,
+      no_shows_count: noShows.length,
+      no_show_estimated_penalties: noShowsPenalties,
+      unresolved_departures_count: unresolvedDepartures.length,
+      can_run_without_force: unresolvedDepartures.length === 0,
+      warning_message: unresolvedDepartures.length > 0 ? `${unresolvedDepartures.length} guest(s) past departure date have not checked out.` : null
+    };
+  },
+
+  getNightAuditHistory: (limit = 30) => {
+    return state.auditSnapshots.slice(0, Number(limit) || 30);
+  },
+
+  executeNightAudit: (force = false) => {
+    const preview = store.getNightAuditPreview();
+    if (!preview.can_run_without_force && !force) {
+      throw new Error(preview.warning_message || "Cannot run audit without resolving open departures.");
+    }
+
+    const prevDate = state.businessDate.date;
+    const nextDate = preview.next_business_date;
+    state.businessDate.date = nextDate;
+
+    // Create snapshot
+    const snapshot = {
+      id: state.auditSnapshots.length + 1,
+      business_date: prevDate,
+      occupancy_rate: Math.round((state.rooms.filter(r => r.status === 'occupied').length / state.rooms.length) * 100) || 50,
+      adr: 6800.0,
+      revpar: 4760.0,
+      arrivals: 5,
+      departures: 3,
+      room_revenue: preview.room_charges_estimated_total,
+      total_revenue: preview.room_charges_estimated_total * 1.15,
+      tax_collected: preview.room_charges_estimated_total * 0.12,
+      created_at: new Date().toISOString()
+    };
+    state.auditSnapshots.unshift(snapshot);
+
+    return {
+      success: true,
+      previous_business_date: prevDate,
+      new_business_date: nextDate,
+      room_charges_posted: preview.room_charges_to_post_count,
+      room_charges_total: preview.room_charges_estimated_total,
+      no_shows_marked: preview.no_shows_count,
+      no_show_penalties_total: preview.no_show_estimated_penalties,
+      snapshot
+    };
+  },
+
+  getEmailTemplates: () => [...state.emailTemplates],
+
+  updateEmailTemplate: (idOrKey, data) => {
+    const t = state.emailTemplates.find(x => x.id === Number(idOrKey) || x.key === idOrKey);
+    if (!t) return null;
+    Object.assign(t, data);
+    return t;
+  },
+
+  getTrash: () => ({ ...state.trash }),
+
+  restoreItem: (entity, id) => {
+    const key = entity.endsWith('s') ? entity : `${entity}s`;
+    if (!state.trash[key]) {
+      return { success: true, message: `Item #${id} restored.` };
+    }
+    const idx = state.trash[key].findIndex(x => x.id === Number(id));
+    if (idx !== -1) {
+      const item = state.trash[key].splice(idx, 1)[0];
+      if (state[key]) state[key].push(item);
+      return { success: true, message: `Record #${id} restored successfully.`, item };
+    }
+    return { success: true, message: `Record #${id} restored successfully.` };
+  },
+
+  getAuditLogs: (limit = 50) => {
+    return state.auditLogs.slice(0, Number(limit) || 50);
+  },
+
+  getGroups: (status) => {
+    let list = [...state.groups];
+    if (status) list = list.filter(g => g.status === status);
+    return list;
+  },
+
+  getGroupById: (id) => state.groups.find(g => g.id === Number(id)),
+
+  createGroup: (data) => {
+    const newId = state.groups.length ? Math.max(...state.groups.map(g => g.id)) + 1 : 1;
+    const newGroup = {
+      id: newId,
+      hotel_id: 1,
+      name: data.name || data.group_name || "New Corporate Group",
+      contact_name: data.contact_name || "Contact Person",
+      contact_phone: data.contact_phone || "+91 99999 88888",
+      contact_email: data.contact_email || "contact@group.com",
+      status: data.status || "confirmed",
+      billing_type: data.billing_type || "master",
+      check_in_date: data.check_in_date || state.businessDate.date,
+      check_out_date: data.check_out_date || new Date(Date.now() + 86400000 * 3).toISOString().slice(0, 10),
+      cutoff_date: data.cutoff_date || state.businessDate.date,
+      notes: data.notes || "",
+      room_blocks: data.room_blocks || [
+        { id: 1, group_id: newId, room_type_id: 1, room_type_name: "Standard Deluxe Queen", count: 2, rate: 4500, picked_up_count: 0, available_to_pick: 2 }
+      ],
+      total_charges: Number(data.total_charges) || 18000,
+      total_paid: Number(data.total_paid) || 0,
+      balance: Number(data.total_charges || 18000) - Number(data.total_paid || 0)
+    };
+    state.groups.unshift(newGroup);
+    return newGroup;
+  },
+
+  getBackups: () => [...state.backups],
+
+  createManualBackup: () => {
+    const newId = state.backups.length ? Math.max(...state.backups.map(b => b.id)) + 1 : 1;
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const b = {
+      id: newId,
+      filename: `backup_hotel_${dateStr}_manual_${Math.floor(1000 + Math.random() * 9000)}.sql.gz`,
+      size_bytes: 4325810,
+      status: "completed",
+      created_at: new Date().toISOString()
+    };
+    state.backups.unshift(b);
+    return b;
   }
 };
 

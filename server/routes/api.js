@@ -123,6 +123,23 @@ router.get('/night-audit/status', (req, res) => {
   });
 });
 
+router.get('/night-audit/preview', (req, res) => {
+  return res.json(store.getNightAuditPreview());
+});
+
+router.get('/night-audit/history', (req, res) => {
+  return res.json(store.getNightAuditHistory(req.query.limit));
+});
+
+router.post('/night-audit/run', (req, res) => {
+  try {
+    const result = store.executeNightAudit(req.body?.force === true);
+    return res.json(result);
+  } catch (e) {
+    return res.status(400).json({ detail: e.message });
+  }
+});
+
 router.post('/night-audit/execute', (req, res) => {
   return res.json({
     status: "success",
@@ -131,7 +148,11 @@ router.post('/night-audit/execute', (req, res) => {
   });
 });
 
-// ── 3. Rooms ─────────────────────────────────────────────────────────────────
+// ── 3. Rooms & Room Types ────────────────────────────────────────────────────
+router.get('/rooms/types', (req, res) => {
+  return res.json(store.getRoomTypes());
+});
+
 router.get('/rooms', (req, res) => {
   const { floor, status } = req.query;
   const items = store.getRooms({ floor, status });
@@ -139,10 +160,14 @@ router.get('/rooms', (req, res) => {
 });
 
 router.get('/rooms/:id', (req, res) => {
-  const rooms = store.getRooms();
-  const room = rooms.find(r => r.id === Number(req.params.id));
+  const room = store.getRoomById(req.params.id);
   if (!room) return res.status(404).json({ detail: 'Room not found' });
   return res.json(room);
+});
+
+router.post('/rooms', (req, res) => {
+  const room = store.addRoom(req.body);
+  return res.status(201).json(room);
 });
 
 router.patch('/rooms/:id/status', (req, res) => {
@@ -224,7 +249,43 @@ router.post('/reservations/:id/check-out', (req, res) => {
   return res.json(r);
 });
 
+router.get('/reservations/:id/cancellation-quote', (req, res) => {
+  const quote = store.getCancellationQuote(req.params.id);
+  if (!quote) return res.status(404).json({ detail: 'Reservation not found' });
+  return res.json(quote);
+});
+
+router.get('/reservations/:id/deposit-status', (req, res) => {
+  const status = store.getDepositStatus(req.params.id);
+  if (!status) return res.status(404).json({ detail: 'Reservation not found' });
+  return res.json(status);
+});
+
+router.post('/reservations/:id/deposit', (req, res) => {
+  const r = store.getReservationById(req.params.id);
+  if (!r) return res.status(404).json({ detail: 'Reservation not found' });
+  const amt = Number(req.body?.amount) || 0;
+  r.total_paid = (r.total_paid || 0) + amt;
+  r.balance_due = Math.max(0, (r.total_charges || 0) - r.total_paid);
+  return res.json(r);
+});
+
+router.post('/reservations/:id/cancel', (req, res) => {
+  const r = store.getReservationById(req.params.id);
+  if (!r) return res.status(404).json({ detail: 'Reservation not found' });
+  r.status = "cancelled";
+  const room = store.getRooms().find(rm => rm.id === r.room_id);
+  if (room && room.status === "occupied") room.status = "available";
+  return res.json(r);
+});
+
 // ── 6. Folios & Billing ──────────────────────────────────────────────────────
+router.get('/billing/reservations/:id/folio', (req, res) => {
+  const folio = store.getFolioDetail(req.params.id);
+  if (!folio) return res.status(404).json({ detail: 'Reservation not found' });
+  return res.json(folio);
+});
+
 router.get('/reservations/:id/folios', (req, res) => {
   const folios = store.getFoliosByReservationId(req.params.id);
   return res.json(folios);
@@ -323,6 +384,16 @@ router.get('/org', (req, res) => {
   return res.json(store.getOrganization());
 });
 
+router.patch('/org', (req, res) => {
+  const org = store.getOrganization();
+  Object.assign(org, req.body);
+  return res.json(org);
+});
+
+router.get('/org/usage', (req, res) => {
+  return res.json(store.getOrgUsage());
+});
+
 router.get('/property', (req, res) => {
   return res.json({
     organization: store.getOrganization(),
@@ -334,11 +405,161 @@ router.get('/property', (req, res) => {
 });
 
 router.get('/policies', (req, res) => {
-  return res.json([
-    { id: 1, name: "Flexible (24h)", description: "Free cancellation up to 24h prior to arrival", active: true },
-    { id: 2, name: "Moderate (3-Day)", description: "Free cancellation up to 3 days prior", active: true },
-    { id: 3, name: "Strict Non-Refundable", description: "100% first night penalty applies immediately", active: true }
-  ]);
+  return res.json(store.getCancellationPolicies());
+});
+
+// ── Cancellation Policies CRUD ───────────────────────────────────────────────
+router.get('/cancellation-policies', (req, res) => {
+  const activeOnly = req.query.active_only === 'true';
+  return res.json(store.getCancellationPolicies(activeOnly));
+});
+
+router.get('/cancellation-policies/:id', (req, res) => {
+  const p = store.getCancellationPolicyById(req.params.id);
+  if (!p) return res.status(404).json({ detail: 'Policy not found' });
+  return res.json(p);
+});
+
+router.post('/cancellation-policies', (req, res) => {
+  const p = store.createCancellationPolicy(req.body);
+  return res.status(201).json(p);
+});
+
+router.put('/cancellation-policies/:id', (req, res) => {
+  const p = store.updateCancellationPolicy(req.params.id, req.body);
+  if (!p) return res.status(404).json({ detail: 'Policy not found' });
+  return res.json(p);
+});
+
+router.delete('/cancellation-policies/:id', (req, res) => {
+  const ok = store.deleteCancellationPolicy(req.params.id);
+  if (!ok) return res.status(404).json({ detail: 'Policy not found' });
+  return res.json({ success: true, message: 'Policy deleted' });
+});
+
+// ── Taxes Engine CRUD ────────────────────────────────────────────────────────
+router.get('/taxes', (req, res) => {
+  const activeOnly = req.query.active_only === 'true';
+  return res.json(store.getTaxes(activeOnly));
+});
+
+router.get('/taxes/:id', (req, res) => {
+  const t = store.getTaxById(req.params.id);
+  if (!t) return res.status(404).json({ detail: 'Tax not found' });
+  return res.json(t);
+});
+
+router.post('/taxes', (req, res) => {
+  const t = store.createTax(req.body);
+  return res.status(201).json(t);
+});
+
+router.put('/taxes/:id', (req, res) => {
+  const t = store.updateTax(req.params.id, req.body);
+  if (!t) return res.status(404).json({ detail: 'Tax not found' });
+  return res.json(t);
+});
+
+router.delete('/taxes/:id', (req, res) => {
+  const ok = store.deleteTax(req.params.id);
+  if (!ok) return res.status(404).json({ detail: 'Tax not found' });
+  return res.json({ success: true, message: 'Tax deleted' });
+});
+
+// ── Users & Team Management ─────────────────────────────────────────────────
+router.get('/users', (req, res) => {
+  return res.json(store.getUsers());
+});
+
+router.post('/users', (req, res) => {
+  try {
+    const user = store.createUser(req.body);
+    return res.status(201).json(user);
+  } catch (e) {
+    return res.status(400).json({ detail: e.message });
+  }
+});
+
+// ── Settings & Email Templates ───────────────────────────────────────────────
+router.get('/settings/emails', (req, res) => {
+  return res.json(store.getEmailTemplates());
+});
+
+router.put('/settings/emails/:id', (req, res) => {
+  const t = store.updateEmailTemplate(req.params.id, req.body);
+  if (!t) return res.status(404).json({ detail: 'Email template not found' });
+  return res.json(t);
+});
+
+router.patch('/settings/emails/:id', (req, res) => {
+  const t = store.updateEmailTemplate(req.params.id, req.body);
+  if (!t) return res.status(404).json({ detail: 'Email template not found' });
+  return res.json(t);
+});
+
+router.post('/settings/emails/:id/test', (req, res) => {
+  return res.json({ success: true, message: 'Test email successfully sent.' });
+});
+
+// ── Backups & Export ─────────────────────────────────────────────────────────
+router.get('/admin/backups', (req, res) => {
+  return res.json(store.getBackups());
+});
+
+router.post('/admin/backups/manual', (req, res) => {
+  const b = store.createManualBackup();
+  return res.json({ success: true, message: 'Manual backup completed successfully', backup: b });
+});
+
+router.post('/admin/backups/run', (req, res) => {
+  const b = store.createManualBackup();
+  return res.json(b);
+});
+
+router.post('/admin/export', (req, res) => {
+  return res.json({ success: true, message: 'Data export triggered', download_url: '/api/admin/backups' });
+});
+
+// ── Trash & Soft-Delete Restore ─────────────────────────────────────────────
+router.get('/trash', (req, res) => {
+  return res.json(store.getTrash());
+});
+
+router.post('/:entity/:id/restore', (req, res) => {
+  const result = store.restoreItem(req.params.entity, req.params.id);
+  return res.json(result);
+});
+
+router.post('/trash/:id/restore', (req, res) => {
+  const result = store.restoreItem('reservations', req.params.id);
+  return res.json(result);
+});
+
+// ── Audit Logs ──────────────────────────────────────────────────────────────
+router.get('/audit-log', (req, res) => {
+  return res.json(store.getAuditLogs(req.query.limit));
+});
+
+router.get('/audit-log/:id', (req, res) => {
+  const log = store.getAuditLogs().find(l => l.id === Number(req.params.id));
+  if (!log) return res.status(404).json({ detail: 'Audit log not found' });
+  return res.json(log);
+});
+
+// ── Groups & Corporate Allocations ──────────────────────────────────────────
+router.get('/groups', (req, res) => {
+  return res.json(store.getGroups(req.query.status_filter));
+});
+
+router.get('/groups/:id', (req, res) => {
+  const g = store.getGroupById(req.params.id);
+  if (!g) return res.status(404).json({ detail: 'Group not found' });
+  return res.json(g);
+});
+
+router.post('/groups', (req, res) => {
+  const g = store.createGroup(req.body);
+  return res.status(201).json(g);
 });
 
 router.post('/user/complete-tour', (req, res) => {

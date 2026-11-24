@@ -375,22 +375,27 @@ window.Pages.Dashboard = {
 
           <div class="task-cards-column">
             ${((data.pending_housekeeping && data.pending_housekeeping.length > 0) ? data.pending_housekeeping : [
-              { id: 101, room: { number: "204" }, task_type: "Full Turnover", priority: "high", status: "pending", assignee: { full_name: "Rohan Staff" } },
-              { id: 102, room: { number: "102" }, task_type: "Stayover Refresh", priority: "medium", status: "pending", assignee: { full_name: "Pooja Kumar" } },
-              { id: 103, room: { number: "305" }, task_type: "VIP Inspection", priority: "urgent", status: "pending", assignee: { full_name: "Sunil Deshmukh" } }
-            ]).slice(0, 3).map((t, idx) => `
-              <div class="task-item-card ${idx === 0 ? 'task-featured' : ''}">
-                <input type="checkbox" class="task-checkbox" ${t.status === 'done' ? 'checked' : ''} data-task-id="${t.id}" />
-                <div class="task-content-block">
-                  <div class="task-date-tag">Room ${t.room ? t.room.number : '—'} · ${(t.priority || 'medium').toUpperCase()}</div>
-                  <div class="task-headline">${(t.task_type || 'Cleaning').replace('_', ' ').toUpperCase()}</div>
-                  <div class="task-assignee-row">
-                    <div class="task-assignee-avatar">${t.assignee ? t.assignee.full_name.slice(0,2).toUpperCase() : 'HK'}</div>
-                    <span>${t.assignee ? t.assignee.full_name : 'Housekeeping Staff'}</span>
+              { id: 101, room_number: "204", task_type: "Full Turnover", priority: "high", status: "pending", assigned_to_name: "Sunita Nair" },
+              { id: 102, room_number: "102", task_type: "Stayover Refresh", priority: "medium", status: "pending", assigned_to_name: "Rahul Verma" },
+              { id: 103, room_number: "305", task_type: "VIP Inspection", priority: "urgent", status: "pending", assigned_to_name: "Sunita Nair" }
+            ]).slice(0, 3).map((t, idx) => {
+              const roomNumber = t.room_number || (t.room && t.room.number) || '104';
+              const assigneeName = t.assigned_to_name || (t.assignee && t.assignee.full_name) || 'Housekeeping Staff';
+              const initials = assigneeName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'HK';
+              return `
+                <div class="task-item-card ${idx === 0 ? 'task-featured' : ''}">
+                  <input type="checkbox" class="task-checkbox" ${t.status === 'done' ? 'checked' : ''} data-task-id="${t.id}" />
+                  <div class="task-content-block">
+                    <div class="task-date-tag">Room ${roomNumber} · ${(t.priority || 'medium').toUpperCase()}</div>
+                    <div class="task-headline">${(t.task_type || 'Cleaning').replace('_', ' ').toUpperCase()}</div>
+                    <div class="task-assignee-row">
+                      <div class="task-assignee-avatar">${initials}</div>
+                      <span>${assigneeName}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       </div>

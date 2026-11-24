@@ -23,14 +23,14 @@ window.Pages.Timeline = {
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <div style="display:inline-flex; align-items:center; gap:6px; flex-shrink:0; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:2px 0;">
-              <button class="btn btn-secondary date-nav-btn" id="tl-prev-btn" title="Previous 30 Days">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
-                <span>Prev 30 Days</span>
+              <button class="btn btn-secondary date-nav-btn" id="tl-prev-btn" title="Previous 30 Days" style="white-space:nowrap !important; word-break:keep-all !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:12px; height:32px; padding:0 12px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:14px; height:14px; flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+                <span style="white-space:nowrap !important; word-break:keep-all !important; display:inline !important;">Prev 30 Days</span>
               </button>
-              <button class="btn btn-secondary date-nav-btn" id="tl-today-btn" title="Jump to Today">Today</button>
-              <button class="btn btn-secondary date-nav-btn" id="tl-next-btn" title="Next 30 Days">
-                <span>Next 30 Days</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+              <button class="btn btn-secondary date-nav-btn" id="tl-today-btn" title="Jump to Today" style="white-space:nowrap !important; word-break:keep-all !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:12px; height:32px; padding:0 12px;">Today</button>
+              <button class="btn btn-secondary date-nav-btn" id="tl-next-btn" title="Next 30 Days" style="white-space:nowrap !important; word-break:keep-all !important; flex-shrink:0 !important; display:inline-flex !important; align-items:center !important; font-size:12px; height:32px; padding:0 12px;">
+                <span style="white-space:nowrap !important; word-break:keep-all !important; display:inline !important;">Next 30 Days</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:14px; height:14px; flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
               </button>
             </div>
             <span id="tl-range-label" style="font-size:13px; font-weight:600; color:#374151; margin-left:4px; white-space:nowrap;"></span>

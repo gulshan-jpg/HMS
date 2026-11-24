@@ -263,12 +263,12 @@ window.Pages.Reservations = {
               ` : ''}
             </td>
             <td>
-              <div style="font-weight: 600; color: #111827;">${r.guest ? r.guest.full_name : '—'}</div>
+              <div style="font-weight: 600; color: #111827;">${(r.guest && (r.guest.full_name || `${r.guest.first_name || ''} ${r.guest.last_name || ''}`.trim())) || 'Guest'}</div>
               <div style="font-size: 11px; color: #6B7280;">${r.guest && r.guest.phone ? r.guest.phone : (r.guest ? r.guest.email : '')}</div>
             </td>
             <td>
               <span class="font-mono font-bold">${r.room ? r.room.number : '—'}</span>
-              <span style="font-size: 11px; color: #6B7280; margin-left: 4px;">(${r.room && r.room.room_type ? r.room.room_type.code : '—'})</span>
+              <span style="font-size: 11px; color: #6B7280; margin-left: 4px;">(${r.room && r.room.room_type ? (r.room.room_type.code || r.room.room_type.name || 'STD') : '—'})</span>
             </td>
             <td>${formatDate(r.check_in_date)}</td>
             <td>${formatDate(r.check_out_date)}</td>
