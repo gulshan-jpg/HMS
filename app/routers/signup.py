@@ -69,6 +69,14 @@ def generate_unique_slug(base_name: str, db: Session) -> str:
 
 def seed_organization_demo_data(org: Organization, db: Session) -> None:
     """Auto-seeds a newly registered hotel organization with realistic demo data matching onboarding."""
+    # Ensure no stale leftover demo records exist for this org.id
+    db.query(Room).filter(Room.organization_id == org.id).delete(synchronize_session=False)
+    db.query(RoomType).filter(RoomType.organization_id == org.id).delete(synchronize_session=False)
+    db.query(RatePlan).filter(RatePlan.organization_id == org.id).delete(synchronize_session=False)
+    db.query(CancellationPolicy).filter(CancellationPolicy.organization_id == org.id).delete(synchronize_session=False)
+    db.query(TaxRate).filter(TaxRate.organization_id == org.id).delete(synchronize_session=False)
+    db.flush()
+
     # 1. Room Types
     rt_dlx = RoomType(
         organization_id=org.id,
@@ -490,6 +498,12 @@ def signup_hotel_organization(
 
         # Link org owner
         org.owner_user_id = owner.id
+
+        # Clean any stale records matching org.id or owner.id (safeguard against reused sequence/auto-increment IDs)
+        db.query(UserOrgMembership).filter(
+            (UserOrgMembership.organization_id == org.id) | (UserOrgMembership.user_id == owner.id)
+        ).delete(synchronize_session=False)
+        db.flush()
 
         # Create Owner Membership
         membership = UserOrgMembership(
