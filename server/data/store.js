@@ -837,8 +837,46 @@ const store = {
         cleaning: state.rooms.filter(r => r.status === "cleaning").length,
         maintenance: state.rooms.filter(r => r.status === "maintenance").length
       },
-      today_arrivals: state.reservations.filter(r => r.status === "confirmed"),
-      today_departures: state.reservations.filter(r => r.status === "checked_in"),
+      today_arrivals: state.reservations.filter(r => r.status === "confirmed").map(r => {
+        const guestName = r.guest ? `${r.guest.first_name || ''} ${r.guest.last_name || ''}`.trim() : (r.guest_name || "Guest");
+        const roomNum = r.room ? r.room.number : (r.room_number || "101");
+        const roomTypeName = (r.room && r.room.room_type) ? r.room.room_type.name : (r.room_type || "Deluxe King");
+        return {
+          reservation_id: r.id,
+          id: r.id,
+          confirmation_number: r.confirmation_number,
+          guest_name: guestName,
+          guest: r.guest,
+          guest_id: r.guest_id,
+          room_number: roomNum,
+          room: r.room,
+          room_type: roomTypeName,
+          nights: r.nights || 2,
+          nightly_rate: r.nightly_rate || 7500,
+          status: r.status,
+          balance: r.balance_due || 0
+        };
+      }),
+      today_departures: state.reservations.filter(r => r.status === "checked_in").map(r => {
+        const guestName = r.guest ? `${r.guest.first_name || ''} ${r.guest.last_name || ''}`.trim() : (r.guest_name || "Guest");
+        const roomNum = r.room ? r.room.number : (r.room_number || "101");
+        const roomTypeName = (r.room && r.room.room_type) ? r.room.room_type.name : (r.room_type || "Deluxe King");
+        return {
+          reservation_id: r.id,
+          id: r.id,
+          confirmation_number: r.confirmation_number,
+          guest_name: guestName,
+          guest: r.guest,
+          guest_id: r.guest_id,
+          room_number: roomNum,
+          room: r.room,
+          room_type: roomTypeName,
+          nights: r.nights || 2,
+          nightly_rate: r.nightly_rate || 7500,
+          status: r.status,
+          balance: r.balance_due || 0
+        };
+      }),
       revenue_chart: {
         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
         data: [95000, 115000, 145450, 142000, 138000, 140000, 148000, 155000, 170000, 185000, 192000, 205000],
@@ -1015,7 +1053,7 @@ const store = {
         return (res.room_id === r.id || (res.room && res.room.number === r.number)) &&
           res.check_in_date < endIso && res.check_out_date > startIso;
       }).map(res => {
-        const guestName = res.guest ? `${res.guest.first_name} ${res.guest.last_name}` : "Guest";
+        const guestName = res.guest ? (`${res.guest.first_name || ''} ${res.guest.last_name || ''}`.trim() || res.guest.full_name) : (res.guest_name || "Guest");
         const initials = guestName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'G';
         return {
           id: res.id,

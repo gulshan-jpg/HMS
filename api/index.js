@@ -33,6 +33,18 @@ const renderTemplate = (filename, vars = {}) => {
   return html;
 };
 
+// Service Worker & Web App Manifest (PWA Offline Support)
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.sendFile(path.join(staticDir, 'sw.js'));
+});
+
+app.get('/manifest.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+  res.sendFile(path.join(staticDir, 'manifest.json'));
+});
+
 // Health probe
 app.get('/healthz', (req, res) => {
   res.json({ status: "healthy", engine: "nodejs", timestamp: new Date().toISOString() });

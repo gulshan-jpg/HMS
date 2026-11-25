@@ -124,10 +124,43 @@ window.Pages.Dashboard = {
     ];
 
     const activeResList = [...(data.today_arrivals || []), ...(data.today_departures || [])];
-    const b1 = (activeResList && activeResList[0]) || fixedDemoBookings[0];
-    const b2 = (activeResList && activeResList[1]) || fixedDemoBookings[1];
-    const b3 = (activeResList && activeResList[2]) || fixedDemoBookings[2];
-    const b4 = (activeResList && activeResList[3]) || fixedDemoBookings[3];
+
+    function resolveBooking(item, fallback) {
+      if (!item) return fallback;
+      let gName = item.guest_name;
+      if (!gName || gName === "undefined" || gName === "Unknown") {
+        if (item.guest) {
+          gName = item.guest.full_name || `${item.guest.first_name || ''} ${item.guest.last_name || ''}`.trim();
+        }
+      }
+      if (!gName || gName === "undefined" || gName === "") {
+        gName = fallback.guest_name;
+      }
+
+      let rNum = item.room_number;
+      if (!rNum || rNum === "undefined" || rNum === "Unassigned") {
+        if (item.room) {
+          rNum = item.room.number;
+        }
+      }
+      if (!rNum || rNum === "undefined" || rNum === "") {
+        rNum = fallback.room_number;
+      }
+
+      const resId = item.reservation_id || item.id || fallback.reservation_id;
+      return {
+        reservation_id: resId,
+        guest_name: gName,
+        room_number: rNum,
+        status: item.status || fallback.status,
+        plan: (item.rate_plan && item.rate_plan.name) || fallback.plan
+      };
+    }
+
+    const b1 = resolveBooking(activeResList[0], fixedDemoBookings[0]);
+    const b2 = resolveBooking(activeResList[1], fixedDemoBookings[1]);
+    const b3 = resolveBooking(activeResList[2], fixedDemoBookings[2]);
+    const b4 = resolveBooking(activeResList[3], fixedDemoBookings[3]);
 
     // Compute current 2-week calendar dates for booking schedule
     const baseDate = window.currentBusinessDate ? new Date(window.currentBusinessDate) : new Date();
